@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Residential vs datacenter proxies: which one your scraper actually needs — ProxyStack</title>
+<meta name="description" content="The practical difference between residential and datacenter proxies, when paying for residential IPs is wasted money, how per-GB pricing traps you, and how to test a proxy before you buy.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/residential-vs-datacenter-proxies.html">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Residential vs datacenter proxies: which one your scraper actually needs">
+<meta property="og:description" content="When paying for residential IPs is wasted money, how per-GB pricing traps you, and how to test a proxy before you buy.">
+<meta property="og:image" content="https://ostrovde.github.io/proxystack/assets/img/og-cover.png">
+<meta property="og:url" content="https://ostrovde.github.io/proxystack/residential-vs-datacenter-proxies.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+      <a href="index.html#notes">Notes</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap article">
+  <p class="kicker">Guide</p>
+  <h1>Residential vs datacenter proxies: which one your scraper actually needs</h1>
+  <p class="lede">The question is never “which is better”. It is “what exactly is blocking me”. Answer
+  that and the proxy type picks itself — usually the cheaper one.</p>
+
+  <div class="note"><b>Affiliate disclosure:</b> some outbound links here are affiliate links. If you
+  buy through one we may earn a commission at no extra cost to you, and such links are marked as
+  sponsored. It does not change what we recommend.</div>
+
+  <div class="toc">
+    <p>On this page</p>
+    <ul>
+      <li><a href="#what">What the two actually are</a></li>
+      <li><a href="#block">What gets you blocked</a></li>
+      <li><a href="#cheap">When datacenter is enough</a></li>
+      <li><a href="#res">When you genuinely need residential</a></li>
+      <li><a href="#cost">The per-gigabyte trap</a></li>
+      <li><a href="#test">How to test before you buy</a></li>
+      <li><a href="#notproxy">When the proxy is not your problem</a></li>
+      <li><a href="#checklist">Decision checklist</a></li>
+    </ul>
+  </div>
+
+  <h2 id="what">What the two actually are</h2>
+  <p><b>Datacenter proxies</b> are IP addresses that belong to hosting providers. They are fast,
+  cheap, stable and sold per IP. Their weakness is exactly their strength: any site can look up who
+  owns the address range and see “this is a server”, because the whole range is registered to a
+  hosting company.</p>
+  <p><b>Residential proxies</b> are IP addresses that belong to real consumer connections —
+  home broadband, mobile carriers. To the target site, a request from them looks like a normal
+  visitor. They are sold per gigabyte rather than per IP, they are slower, and their quality varies
+  because you never know what the peer connection is doing.</p>
+  <p>Two hybrids matter in practice:</p>
+  <ul>
+    <li><b>Static residential / ISP proxies</b> — residential-looking addresses hosted in a
+    datacenter. Fast like datacenter, credible like residential, priced per IP. Often the best
+    compromise, and the option most people never consider.</li>
+    <li><b>Mobile proxies</b> — carrier IPs, shared with many real users. The most trusted and the
+    most expensive; usually overkill unless the target is brutal about mobile traffic.</li>
+  </ul>
+
+  <h2 id="block">What gets you blocked — in the order it actually happens</h2>
+  <p>People reach for residential proxies too early because they assume blocking is about the IP.
+  Usually it is a stack, and the IP is only one layer:</p>
+  <ol>
+    <li><b>Rate and concurrency.</b> Ten requests per second from one address gets you limited even
+    from a pristine residential IP.</li>
+    <li><b>Behaviour.</b> Identical headers, no cookies, no referrer, requests in perfect sequence.
+    A bot detector does not need your IP to see this.</li>
+    <li><b>ASN reputation.</b> This is where datacenter addresses lose. Not “this IP is banned” but
+    “this whole network is a hosting provider”.</li>
+    <li><b>Fingerprint.</b> TLS handshake and browser fingerprint mismatched with the claimed
+    user agent.</li>
+    <li><b>IP reuse.</b> On shared residential pools you inherit other people's history.</li>
+  </ol>
+  <p>If your problem is layer 1, 2 or 4, buying residential IPs fixes nothing and costs more.</p>
+
+  <h2 id="cheap">When datacenter is enough</h2>
+  <ul>
+    <li>Public APIs and open data endpoints with documented rate limits.</li>
+    <li>Targets with no bot protection — plenty of government, academic and small-business sites.</li>
+    <li>High-volume, simple fetches where you need throughput and control, not disguise.</li>
+    <li>Anything you fetch from your own infrastructure, where you just need a different egress
+    address or a fixed one for allow-listing.</li>
+  </ul>
+  <p>Start here. Datacenter is cheaper per unit of work, faster, and predictable. Move up only when
+  you can name the specific wall you hit.</p>
+
+  <h2 id="res">When you genuinely need residential</h2>
+  <ul>
+    <li><b>Search engine results pages.</b> These are defended by ASN reputation as a first filter.</li>
+    <li><b>Large e-commerce and travel sites</b> with aggressive anti-bot vendors in front of them.</li>
+    <li><b>Geo-restricted content</b> where you need a real consumer address in a specific country
+    or city, not just a server there.</li>
+    <li><b>Ad verification and price comparison</b>, where the response you get must match what a
+    normal visitor sees.</li>
+  </ul>
+  <p>In these cases the cheap option is not a saving, it is a false start: you pay for requests that
+  return challenge pages, then pay again for the pool that works.</p>
+
+  <h2 id="cost">The per-gigabyte trap</h2>
+  <p>Datacenter is sold per IP, residential per gigabyte — and that difference changes how you should
+  write your scraper, not just your invoice:</p>
+  <ul>
+    <li><b>You pay for bytes you never read.</b> Images, fonts, trackers and analytics all count
+    toward consumed traffic. Blocking images, fonts and third-party scripts often cuts consumption
+    by more than half — same data extracted, smaller bill.</li>
+    <li><b>Heavy pages punish you twice.</b> A 4&nbsp;MB product page costs several times a 400&nbsp;KB
+    one, per request, forever.</li>
+    <li><b>Retries are billable.</b> A pool that fails 40% of the time is not cheap at any per-GB
+    rate: you pay for the failures too.</li>
+    <li><b>Successful requests are the only unit that matters.</b> Compare pools by cost per
+    <i>successful</i> page, never by cost per GB.</li>
+  </ul>
+
+  <h2 id="test">How to test before you buy</h2>
+  <ol>
+    <li><b>Buy the smallest possible amount.</b> Every serious provider allows a trial-sized purchase;
+    a plan you cannot finish is a plan you overpaid for.</li>
+    <li><b>Take 50–200 real target URLs</b>, not the homepage. Homepages are rarely protected the way
+    detail pages are.</li>
+    <li><b>Measure success rate, not latency.</b> A slow request that returns real content beats a
+    fast one returning a challenge page.</li>
+    <li><b>Check what you leak.</b> Headers, DNS resolution, WebRTC. A proxy that leaks your real
+    address is worse than none, because you believe you are covered.</li>
+    <li><b>Test session handling.</b> Sticky sessions that silently rotate mid-flow break logins and
+    multi-step checkout monitoring.</li>
+    <li><b>Re-test after a week.</b> Pool quality drifts; a snapshot on day one is not a verdict.</li>
+  </ol>
+  <p>Providers that publish their own testing tools are easier to evaluate, because you can check the
+  address you were actually assigned instead of trusting a description. IPRoyal, for example, ships a
+  <a data-out="iproyal" href="https://iproyal.com/">proxy tester and checker</a> alongside the paid
+  pools — useful during evaluation regardless of which provider you end up buying from.</p>
+
+  <h2 id="notproxy">When the proxy is not your problem</h2>
+  <p>Before buying anything bigger, rule these out — they produce the same symptom and none of them
+  are fixed by a better pool:</p>
+  <ul>
+    <li>Concurrency so high that every IP gets limited within minutes.</li>
+    <li>No retry policy, so transient failures look like permanent blocking.</li>
+    <li>One address for everything, including login flows, instead of per-session assignment.</li>
+    <li>A fingerprint that contradicts the user agent you send.</li>
+    <li>Parsing that breaks on layout variants, so you blame the pool for missing data that arrived
+    fine.</li>
+  </ul>
+
+  <h2 id="checklist">Decision checklist</h2>
+  <ol>
+    <li>Does the target block by ASN reputation? If no → datacenter.</li>
+    <li>Do you need many parallel workers more than you need disguise? If yes → datacenter.</li>
+    <li>Do you need a real consumer address in a specific place? If yes → residential or ISP.</li>
+    <li>Is the target mobile-sensitive? Only then consider mobile.</li>
+    <li>Have you measured cost per <i>successful</i> page for both options? Do that before committing.</li>
+  </ol>
+
+  <div class="takeaway">
+    <h3>Short version</h3>
+    <ul>
+      <li>Start with datacenter or ISP proxies; they are cheaper and often enough.</li>
+      <li>Move to residential only when you can name the wall — usually SERPs or heavily defended
+      e-commerce.</li>
+      <li>Write the scraper for per-GB billing: block images and trackers, control retries.</li>
+      <li>Judge pools by cost per successful page, not by price per gigabyte.</li>
+    </ul>
+  </div>
+
+  <p class="small">Last reviewed: September 2026. Vendors change pools, limits and prices constantly —
+  confirm current numbers on the vendor's own pricing page before buying. Nothing here is legal
+  advice, and scraping rules differ by site and jurisdiction; respect terms of service and local law.</p>
+
+  <p class="small sponsored-note" hidden>Some links on this page are monetised. They carry
+  <code>rel="sponsored"</code> and never affect what is recommended above.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="index.html#about">About</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — independent notes. Some outbound
+    links are affiliate links; see the disclosure above.</p>
+  </div>
+</footer>
+
+<script src="assets/links.js" defer></script>
+</body>
+</html>
