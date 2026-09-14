@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wie Sie einen Proxy vor dem Kauf testen — ProxyStack</title>
+<meta name="description" content="Kauftest für Proxy-Pools: was Sie messen sollten, warum Latenz täuscht, wie Sie Leaks erkennen und der zweite Test, den fast alle auslassen.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/de/proxy-vor-dem-kauf-testen.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/how-to-test-a-proxy-before-you-buy.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/como-probar-un-proxy-antes-de-comprar.html">
+<link rel="alternate" hreflang="pt-BR" href="https://ostrovde.github.io/proxystack/pt/como-testar-um-proxy-antes-de-comprar.html">
+<link rel="alternate" hreflang="de" href="https://ostrovde.github.io/proxystack/de/proxy-vor-dem-kauf-testen.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/how-to-test-a-proxy-before-you-buy.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residential-vs-datacenter.html">Proxy-Typen</a>
+      <a href="../proxy-cost-calculator.html">Rechner</a>
+      <a href="index.html#notizen">Notizen</a>
+      <a href="../index.html">EN</a>
+      <a href="../es/index.html">ES</a>
+      <a href="../pt/index.html">PT</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-test.svg" width="1200" height="320"
+      alt="Erfolgsquoten-Anzeige neben einer Prüfliste mit Häkchen"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Leitfaden</p>
+  <h1>Wie Sie einen Proxy vor dem Kauf testen</h1>
+  <p class="lede">Anbieter veröffentlichen Benchmarks, die ihre eigenen Pools bevorzugen. Prüfen können
+  Sie die nicht — aber Sie können in etwa einer Stunde einen Test fahren, der zählt. Genau darin liegt
+  der Unterschied zwischen einmal richtig kaufen und dreimal falsch.</p>
+
+  <div class="note"><b>Affiliate-Hinweis:</b> einige ausgehende Links sind Affiliate-Links und als
+  gesponsert gekennzeichnet.</div>
+
+  <h2>Regel eins: Erfolg messen, nicht Geschwindigkeit</h2>
+  <p>Der Standardfehler ist die Latenzmessung. Ein Pool, der in 200 ms mit einer Challenge-Seite
+  antwortet, ist <i>für Ihren Zweck</i> langsamer als einer, der in 1,5 s echten Inhalt liefert — denn
+  der schnelle hat nichts Verwertbares produziert.</p>
+  <p>Die einzige Kennzahl, die den Produktivbetrieb übersteht, sind <b>Kosten pro erfolgreich geparster
+  Seite</b>: nutzbare Ergebnisse geteilt durch den Aufwand, sie zu bekommen.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Kennzahl</th><th>Nützlich?</th><th>Warum</th></tr></thead>
+      <tbody>
+        <tr><td>Latenz (ms)</td><td class="bad">Nein</td><td>Misst das Falsche; schnelle Fehlschläge wirken gut</td></tr>
+        <tr><td>Erfolgsquote auf Ihren URLs</td><td class="good">Ja</td><td>Die Zahl, die entscheidet, ob der Pool taugt</td></tr>
+        <tr><td>Kosten pro erfolgreicher Seite</td><td class="good">Ja</td><td>Fasst Preis und Fehlerquote in einer Zahl zusammen</td></tr>
+        <tr><td>Poolgröße („64 Mio. IPs“)</td><td class="bad">Nein</td><td>Marketingzahl; sagt nichts über Ihre Ziele</td></tr>
+        <tr><td>Verbrauchte GB vs. nutzbare GB</td><td class="good">Ja</td><td>Bei GB-Abrechnung ist das Ihre echte Effizienz</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Regel zwei: testen Sie die Seiten, die Sie wirklich brauchen</h2>
+  <p>Die Startseite eines Anbieters und eine Kategorieliste sind selten so geschützt wie eine
+  Produktdetailseite, ein Suchergebnis oder eine API hinter einer Challenge. Nehmen Sie <b>50–200 echte
+  URLs</b> aus Ihrer eigenen Liste, inklusive der unangenehmen, und schicken Sie sie durch den
+  Testpool.</p>
+  <p>Testen Sie nur die leichten Seiten, bestehen alle Pools — und der Test hat nichts gelehrt.</p>
+
+  <h2>Regel drei: wiederholen Sie den Test nach einer Woche</h2>
+  <p>Pool-Qualität bewegt sich. Residential-Netze sind Peer-to-Peer: Adressen vom ersten Tag können am
+  achten anders reagieren. Eine einzelne Momentaufnahme ist kein Urteil, sondern ein erster Eindruck.</p>
+
+  <h2>Prüfliste vor dem Kauf</h2>
+  <ol>
+    <li><b>Kaufen Sie das Minimum</b>, das einen echten Test erlaubt.</li>
+    <li><b>Prüfen Sie, was Sie tatsächlich bekommen.</b> Kontrollieren Sie die Ausgangs-IP per Abfrage,
+    nicht nur das im Dashboard angezeigte Land. Länder-Targeting ist kein Städte-Targeting.</li>
+    <li><b>Prüfen Sie Leaks.</b> Header, DNS-Auflösung, WebRTC.</li>
+    <li><b>Testen Sie Sticky Sessions von Anfang bis Ende.</b> Einloggen, drei Schritte gehen, dieselbe
+    Adresse bestätigen.</li>
+    <li><b>Protokollieren Sie jeden Statuscode.</b> Trennen Sie 200, 403, 429, 503 und Challenge-Seiten.
+    Ein Pool, der unter Last 429 liefert, ist ein Parallelitätsproblem — kein Pool-Problem.</li>
+    <li><b>Vergleichen Sie verbrauchten mit nutzbarem Traffic.</b> Wenn 4 MB rausgehen, um ein
+    40-KB-JSON zu liefern, zahlen Sie Bilder und Tracker, die Sie nie lesen.</li>
+  </ol>
+
+  <h2>Kostenloser Einstieg</h2>
+  <p>Für den ersten Durchlauf brauchen Sie kein bezahltes Werkzeug. Ein Proxy-Checker und ein Leak-Test
+  zeigen, ob die zugewiesene Adresse die erwartete ist und ob Ihr eigener Client falsch konfiguriert
+  ist. Manche Anbieter veröffentlichen diese Werkzeuge selbst: IPRoyal etwa bietet
+  <a data-out="iproyal" href="https://iproyal.com/">Tester, Checker und WebRTC-Leak-Test</a> neben den
+  kostenpflichtigen Pools. Zur Bewertung nutzbar, egal wo Sie kaufen.</p>
+
+  <h2>Was Sie mit dem Ergebnis tun</h2>
+  <ul>
+    <li><b>Über etwa 95 % auf den schweren URLs:</b> Der Pool erfüllt seinen Zweck. Optimieren Sie
+    Kosten, nicht den Anbieter.</li>
+    <li><b>70–95 %:</b> meist Konfiguration — Parallelität, Header, Sessions — vor dem Pool. Erst das
+    beheben, dann erneut testen.</li>
+    <li><b>Unter 70 %:</b> Der Pool passt nicht zu diesen Zielen. Eine Stufe höher gehen
+    (Datacenter → ISP → Residential) oder akzeptieren, dass dieses Ziel einen anderen Ansatz braucht.</li>
+  </ul>
+
+  <div class="takeaway">
+    <h3>Kurzfassung</h3>
+    <ul>
+      <li>Testen Sie mit Ihren eigenen URLs, inklusive der schweren.</li>
+      <li>Urteilen Sie nach Erfolgsquote und Kosten pro erfolgreicher Seite — nie nach Latenz oder
+      Poolgröße.</li>
+      <li>Prüfen Sie Leaks und Session-Konsistenz, nicht nur „verbindet“.</li>
+      <li>Nach einer Woche wiederholen und Statuscodes getrennt auswerten, um die richtige Schicht zu
+      reparieren.</li>
+    </ul>
+  </div>
+
+  <p class="small">Letzte Prüfung: September 2026. Prüfen Sie Pool, Limits und aktuelle Preise auf der
+  Anbieterseite. Scraping-Regeln unterscheiden sich je nach Website und Rechtsraum — beachten Sie
+  Nutzungsbedingungen und geltendes Recht.</p>
+
+  <p class="small sponsored-note" hidden>Einige Links auf dieser Seite sind monetarisiert. Sie tragen
+  <code>rel="sponsored"</code> und beeinflussen die Empfehlungen nicht.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Start</a>
+        <a href="proxies-residential-vs-datacenter.html">Proxy-Typen</a>
+        <a href="../how-to-test-a-proxy-before-you-buy.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — unabhängige Notizen. Einige ausgehende
+    Links sind Affiliate-Links.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>

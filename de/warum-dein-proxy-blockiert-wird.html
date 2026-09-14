@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warum Ihr Proxy blockiert wird: sieben echte Ursachen — ProxyStack</title>
+<meta name="description" content="Blockierungen liegen selten an der IP allein. Rate, Verhalten, ASN-Reputation, Fingerprint und Wiederverwendung: wie Sie erkennen, welche Schicht versagt.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/de/warum-dein-proxy-blockiert-wird.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/why-your-proxy-gets-blocked.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/por-que-bloquean-tu-proxy.html">
+<link rel="alternate" hreflang="pt-BR" href="https://ostrovde.github.io/proxystack/pt/por-que-seu-proxy-e-bloqueado.html">
+<link rel="alternate" hreflang="de" href="https://ostrovde.github.io/proxystack/de/warum-dein-proxy-blockiert-wird.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/why-your-proxy-gets-blocked.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residential-vs-datacenter.html">Proxy-Typen</a>
+      <a href="../proxy-cost-calculator.html">Rechner</a>
+      <a href="index.html#notizen">Notizen</a>
+      <a href="../index.html">EN</a>
+      <a href="../es/index.html">ES</a>
+      <a href="../pt/index.html">PT</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-blocked.svg" width="1200" height="320"
+      alt="Blockierte Anfrage mit Status 403 neben einem Diagramm der Anfragen pro Minute"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Diagnose</p>
+  <h1>Warum Ihr Proxy blockiert wird: sieben echte Ursachen</h1>
+  <p class="lede">„Meine Proxys sind blockiert“ ist ein Symptom, keine Diagnose. Blockierungen
+  entstehen in Schichten — und die Schicht, die Sie zuerst verdächtigen, ist selten die, die versagt.</p>
+
+  <div class="note"><b>Affiliate-Hinweis:</b> einige ausgehende Links sind Affiliate-Links und als
+  gesponsert gekennzeichnet.</div>
+
+  <h2>1. Rate und Parallelität</h2>
+  <p>Die häufigste und am meisten übersehene Ursache. Zehn Anfragen pro Sekunde von einer Adresse
+  reichen für eine Limitierung — auch bei einwandfreier Residential-IP. Beginnen die Fehler nach N
+  Anfragen und nicht nach einem geografischen Muster, ist es diese Schicht.</p>
+  <p><b>Abhilfe:</b> Parallelität senken, auf mehr Adressen verteilen, Zufall in die Pausen bringen.
+  Feste Intervalle sind selbst ein Muster.</p>
+
+  <h2>2. Verhalten, das kein Mensch erzeugt</h2>
+  <p>Identische Header, keine Cookies, kein Referer, perfekte Reihenfolge, maschinelle Intervalle. Der
+  Detektor braucht Ihre IP nicht — ihm genügt Ihr Anfrageprotokoll.</p>
+
+  <h2>3. ASN-Reputation — hier verliert das Datacenter</h2>
+  <p>Die Regel lautet meist nicht „diese IP ist gesperrt“, sondern „dieses ganze Netz gehört einem
+  Hoster“. Das kann jede Website nachschlagen. Es ist die einzige Ursache, die eine andere Adressklasse
+  wirklich behebt.</p>
+  <p><b>Abhilfe:</b> auf ISP/statisches Residential oder Residential wechseln — die Mittelstufe reicht
+  oft. Siehe <a href="proxies-residential-vs-datacenter.html">welchen Proxy-Typ Sie brauchen</a>.</p>
+
+  <h2>4. Fingerprint im Widerspruch zu den Headern</h2>
+  <p>Sie geben sich als Chrome unter Windows aus, aber TLS-Handshake und Browser-Fingerprint sagen
+  Python requests. Alles andere kann perfekt sein — das allein kostet Sie eine Challenge.</p>
+
+  <h2>5. Geerbte Historie in geteilten Pools</h2>
+  <p>In geteilten Residential-Netzen erben Sie nicht nur die Adresse, sondern was andere damit gemacht
+  haben. Zwei identische Setups können sich allein deshalb unterschiedlich verhalten.</p>
+
+  <h2>6. Ihre eigene Wiederholungslogik</h2>
+  <p>Eine naive Wiederholungsschleife vervielfacht die Last genau dann, wenn das Ziel schon unzufrieden
+  ist. Fünf sofortige Wiederholungen machen aus einer weichen Drossel eine harte Sperre.</p>
+  <p><b>Abhilfe:</b> exponentielles Backoff mit Jitter, Circuit Breaker pro Adresse, Obergrenze pro URL.
+  429 und 503 sind Signale, keine Zufallsfehler.</p>
+
+  <h2>7. Parallelität gegen eine Session, die konsistent bleiben muss</h2>
+  <p>Umfasst ein Ablauf mehrere Anfragen, zerlegt Parallelisierung über verschiedene Ausgangsadressen
+  die Session — und die Seite antwortet, als täten Sie etwas Feindseliges, weil Sie es aus ihrer Sicht
+  tun.</p>
+  <p><b>Abhilfe:</b> eine Adresse pro Session fixieren und die Anfragen darin sequenziell halten. Dafür
+  gibt es <a href="rotierende-vs-sticky-sessions.html">Sticky Sessions</a>.</p>
+
+  <h2>Die Schichten in zehn Minuten unterscheiden</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Symptom</th><th>Wahrscheinlichste Schicht</th></tr></thead>
+      <tbody>
+        <tr><td>Funktioniert, scheitert nach N Anfragen oder M Minuten</td><td>Rate / Parallelität</td></tr>
+        <tr><td>Funktioniert in einem Pool, scheitert in einem anderen beim selben Ziel</td><td>ASN-Reputation</td></tr>
+        <tr><td>Scheitert sofort, bei jeder Adresse</td><td>Fingerprint oder Header</td></tr>
+        <tr><td>Scheitert nur bei manchen Adressen, zufällig</td><td>IP-Wiederverwendung</td></tr>
+        <tr><td>Scheitert nur bei mehrstufigen Abläufen</td><td>Session-Konsistenz</td></tr>
+        <tr><td>Wird schlimmer, je mehr Sie wiederholen</td><td>Ihre Wiederholungslogik</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Bevor Sie einen größeren Pool kaufen</h2>
+  <p>Fahren Sie den Test aus <a href="proxy-vor-dem-kauf-testen.html">Proxy vor dem Kauf testen</a>.
+  Liegt Ihre Erfolgsquote zwischen 70 % und 95 %, ist es fast immer Konfiguration: Ein teurerer Pool
+  verdeckt das eine Woche und scheitert dann genauso.</p>
+  <p>Brauchen Sie eine andere Adressklasse, um die ASN-Hypothese zu prüfen, ist das der einzige Fall, in
+  dem der Kauf das Experiment ist. IPRoyal etwa bietet
+  <a data-out="iproyal" href="https://iproyal.com/">Datacenter-, ISP- und Residential-Pools</a> unter
+  einem Konto — so lässt sich der Vergleich ohne drei Verträge ziehen.</p>
+
+  <div class="takeaway">
+    <h3>Kurzfassung</h3>
+    <ul>
+      <li>Blockierungen sind geschichtet: erst Rate, Verhalten und Fingerprint prüfen, dann den Pool.</li>
+      <li>ASN-Reputation ist die einzige Ursache, die eine andere Adressklasse behebt.</li>
+      <li>Statuscodes getrennt protokollieren, damit jede Schicht ihre eigene Antwort bekommt.</li>
+      <li>Erst Wiederholungen und Sessions reparieren — das ist kostenlos und meist das Problem.</li>
+    </ul>
+  </div>
+
+  <p class="small">Letzte Prüfung: September 2026. Scraping-Regeln unterscheiden sich je nach Website
+  und Rechtsraum — beachten Sie Nutzungsbedingungen und geltendes Recht.</p>
+
+  <p class="small sponsored-note" hidden>Einige Links auf dieser Seite sind monetarisiert. Sie tragen
+  <code>rel="sponsored"</code> und beeinflussen die Empfehlungen nicht.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Start</a>
+        <a href="proxy-vor-dem-kauf-testen.html">Testen</a>
+        <a href="../why-your-proxy-gets-blocked.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — unabhängige Notizen. Einige ausgehende
+    Links sind Affiliate-Links.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>

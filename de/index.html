@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProxyStack — Proxys und Scraping ohne Verkaufsgerede</title>
+<meta name="description" content="Praktische Notizen zu Proxys, Scraping und Automatisierung: was beim Skalieren wirklich bricht, wie sich der GB-Preis verhält und wann Sie gar keinen Proxy brauchen.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/de/">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/">
+<link rel="alternate" hreflang="pt-BR" href="https://ostrovde.github.io/proxystack/pt/">
+<link rel="alternate" hreflang="de" href="https://ostrovde.github.io/proxystack/de/">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residential-vs-datacenter.html">Proxy-Typen</a>
+      <a href="../proxy-cost-calculator.html">Rechner</a>
+      <a href="index.html#notizen">Notizen</a>
+      <a href="../index.html">EN</a>
+      <a href="../es/index.html">ES</a>
+      <a href="../pt/index.html">PT</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap band-in">
+    <div>
+      <p class="hchip"><i></i> Getestet, nicht umgeschrieben · Stand September 2026</p>
+      <h1>Proxys und Scraping-Infrastruktur, ohne Verkaufsgerede</h1>
+      <p class="lede">Fast alles über Proxys wird von Proxy-Verkäufern geschrieben. Das hier sind
+      Arbeitsnotizen dazu, was beim Skalieren tatsächlich bricht, wie sich Preismodelle verhalten und
+      — oft die nützlichste Antwort — wann Sie überhaupt keinen Proxy brauchen.</p>
+      <div class="badges">
+        <span class="badge">Unabhängige Notizen</span>
+        <span class="badge ok">Keine bezahlten Platzierungen</span>
+        <span class="badge warm">Preise ändern sich — prüfen Sie nach</span>
+      </div>
+    </div>
+    <figure class="band-art">
+      <img src="../assets/img/hero-globe.svg" width="1120" height="620"
+           alt="Schematischer Globus mit Proxy-Knoten, einem Schutzschild und Anfragemetriken">
+    </figure>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <div class="note">
+    <b>Affiliate-Hinweis:</b> einige ausgehende Links auf dieser Seite sind Affiliate-Links. Kaufen Sie
+    darüber, erhalten wir möglicherweise eine Provision — ohne Mehrkosten für Sie. Solche Links sind als
+    gesponsert gekennzeichnet. Auf unsere Empfehlungen hat das keinen Einfluss: Werkzeuge, die wir nicht
+    nutzen würden, stehen hier einfach nicht.
+  </div>
+
+  <h2 id="notizen">Hier anfangen</h2>
+  <div class="cards">
+    <div class="card">
+      <a class="thumb" href="proxies-residential-vs-datacenter.html"><img src="../assets/img/g-proxies.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Leitfaden</p>
+        <h3>Residential vs. Datacenter</h3>
+        <p>Was Ihr Scraper wirklich braucht — und wann bezahlte Residential-IPs schlicht Geldverbrennung
+        sind.</p>
+        <a class="more" href="proxies-residential-vs-datacenter.html">Leitfaden lesen →</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="thumb" href="proxy-vor-dem-kauf-testen.html"><img src="../assets/img/g-test.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Leitfaden</p>
+        <h3>Proxy vor dem Kauf testen</h3>
+        <p>Was Sie messen sollten, warum Latenz die falsche Kennzahl ist und der zweite Test, den fast
+        alle auslassen.</p>
+        <a class="more" href="proxy-vor-dem-kauf-testen.html">Leitfaden lesen →</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="thumb" href="warum-dein-proxy-blockiert-wird.html"><img src="../assets/img/g-blocked.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Diagnose</p>
+        <h3>Warum Ihr Proxy blockiert wird</h3>
+        <p>Sieben echte Ursachen in der Reihenfolge ihres Auftretens — und wie Sie erkennen, welche
+        Schicht versagt.</p>
+        <a class="more" href="warum-dein-proxy-blockiert-wird.html">Leitfaden lesen →</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="thumb" href="rotierende-vs-sticky-sessions.html"><img src="../assets/img/g-sessions.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Infrastruktur</p>
+        <h3>Rotierende vs. Sticky Sessions</h3>
+        <p>Sie lösen gegensätzliche Probleme, und die falsche Wahl scheitert lautlos: Ihre Daten werden
+        still und leise falsch.</p>
+        <a class="more" href="rotierende-vs-sticky-sessions.html">Leitfaden lesen →</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>Alle Artikel</h2>
+  <ul class="artlist">
+    <li><a href="proxies-residential-vs-datacenter.html"><span class="num">01</span>
+      <span class="t">Residential- oder Datacenter-Proxys: was Ihr Scraper braucht</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="proxy-vor-dem-kauf-testen.html"><span class="num">02</span>
+      <span class="t">Wie Sie einen Proxy vor dem Kauf testen</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="warum-dein-proxy-blockiert-wird.html"><span class="num">03</span>
+      <span class="t">Warum Ihr Proxy blockiert wird: sieben echte Ursachen</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="rotierende-vs-sticky-sessions.html"><span class="num">04</span>
+      <span class="t">Rotierende vs. Sticky Sessions: wann welche scheitert</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="proxy-preis-pro-gb-vs-pro-ip.html"><span class="num">05</span>
+      <span class="t">Proxy-Preise: pro GB oder pro IP</span>
+      <span class="arrow">→</span></a></li>
+  </ul>
+
+  <h2 id="ueber">Was diese Seite ist</h2>
+  <p>ProxyStack veröffentlicht Praxisnotizen zur Infrastruktur hinter Datenerhebung: Proxys,
+  Browser-Automatisierung, entfernte Maschinen und das Werkzeug drumherum. Das Ziel ist eng umrissen —
+  einmal richtig wählen, statt dreimal nachkaufen.</p>
+  <ul>
+    <li>Wir beschreiben, wofür ein Werkzeug <b>nicht</b> taugt, nicht nur wofür es taugt.</li>
+    <li>Wir veröffentlichen keine erfundenen Preise oder Limits. Ist eine Zahl unsicher, verlinken wir
+    die Preisseite des Anbieters und sagen es dazu.</li>
+    <li>Affiliate-Beziehungen werden auf jeder Seite offengelegt und entscheiden nie über die
+    Reihenfolge.</li>
+  </ul>
+
+  <p class="small sponsored-note" hidden>Einige Links auf dieser Seite sind monetarisiert. Sie tragen
+  <code>rel="sponsored"</code> und beeinflussen die Empfehlungen nicht.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="proxies-residential-vs-datacenter.html">Proxy-Typen</a>
+        <a href="index.html#ueber">Über</a>
+        <a href="../index.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — unabhängige Notizen. Einige ausgehende
+    Links sind Affiliate-Links. Anbieter ändern Preise und Limits häufig; prüfen Sie immer deren eigene
+    Seite. Nichts hiervon ist Rechts- oder Finanzberatung.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>

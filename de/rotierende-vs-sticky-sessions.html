@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotierende vs. Sticky Sessions: wann welche scheitert — ProxyStack</title>
+<meta name="description" content="Rotierende Adressen und feste Sessions lösen gegensätzliche Probleme. Wie Sie pro Aufgabe wählen, wie lange eine Session leben sollte und der Fehler, der Daten still verfälscht.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/de/rotierende-vs-sticky-sessions.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/rotating-vs-sticky-sessions.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/sesiones-rotativas-vs-fijas.html">
+<link rel="alternate" hreflang="pt-BR" href="https://ostrovde.github.io/proxystack/pt/sessoes-rotativas-vs-fixas.html">
+<link rel="alternate" hreflang="de" href="https://ostrovde.github.io/proxystack/de/rotierende-vs-sticky-sessions.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/rotating-vs-sticky-sessions.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residential-vs-datacenter.html">Proxy-Typen</a>
+      <a href="../proxy-cost-calculator.html">Rechner</a>
+      <a href="index.html#notizen">Notizen</a>
+      <a href="../index.html">EN</a>
+      <a href="../es/index.html">ES</a>
+      <a href="../pt/index.html">PT</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-sessions.svg" width="1200" height="320"
+      alt="Zwei Session-Modi im Vergleich: rotierende Adressen gegen eine feste Adresse"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Infrastruktur</p>
+  <h1>Rotierende vs. Sticky Sessions: wann welche scheitert</h1>
+  <p class="lede">Sie lösen gegensätzliche Probleme, und die falsche Wahl erzeugt einen Fehler, den man
+  kaum sieht: Der Code läuft, die Anfragen liefern 200 — und die Daten sind still und leise falsch.</p>
+
+  <div class="note"><b>Affiliate-Hinweis:</b> einige ausgehende Links sind Affiliate-Links und als
+  gesponsert gekennzeichnet.</div>
+
+  <h2>Der Unterschied in einem Satz</h2>
+  <p><b>Rotierend</b> liefert pro Anfrage eine andere Ausgangs-IP. <b>Sticky</b> liefert dieselbe IP für
+  die Dauer einer Session. Gleicher Pool, gleicher Preis, gegensätzliches Verhalten — und die richtige
+  Wahl hängt allein davon ab, ob sich das Ziel zwischen den Anfragen an Sie erinnert.</p>
+
+  <h2>Rotierend, wenn jede Anfrage unabhängig ist</h2>
+  <ul>
+    <li>Produkt- oder Listenseiten, die ohne Login sichtbar sind.</li>
+    <li>Öffentliche Daten, bei denen nichts zwischen Seiten mitwandert.</li>
+    <li>Großvolumiges Crawling, bei dem die Last verteilt werden soll.</li>
+  </ul>
+
+  <h2>Sticky, wenn das Ziel Sie verfolgt</h2>
+  <ul>
+    <li>Alles hinter einem Login: ein IP-Wechsel mitten im Ablauf wirkt wie Session-Hijacking.</li>
+    <li>Mehrstufige Abläufe: Warenkorb, Checkout, Buchungen, Formulare.</li>
+    <li>Seiten, die einmal eine Challenge stellen und danach der Adresse vertrauen.</li>
+    <li>Limits pro Adresse, bei denen ein IP-Wechsel Ihren Fortschritt zurücksetzt.</li>
+  </ul>
+
+  <h2>Der stille Fehler</h2>
+  <p>Der teure Fehler ist das Rotieren innerhalb einer Session, die Kontinuität braucht. Nichts stürzt
+  ab. Stattdessen passiert Folgendes:</p>
+  <ol>
+    <li>Die Session rotiert mitten im Ablauf, und die Seite behandelt die nächste Anfrage als neuen,
+    nicht angemeldeten Besucher.</li>
+    <li>Sie erhalten eine Login-Seite oder eine Challenge — mit HTTP 200, denn der Server hat erfolgreich
+    geantwortet.</li>
+    <li>Ihr Parser akzeptiert das und schreibt leere oder Standardwerte als echte Daten.</li>
+  </ol>
+  <p>Sie merken es Wochen später in einem Datensatz, der vollständig aussieht und es nicht ist.
+  Validieren Sie Antworten gegen einen bekannten Marker, nicht nur gegen den Statuscode.</p>
+
+  <h2>Wie lange eine Sticky Session leben sollte</h2>
+  <ul>
+    <li><b>Minuten, nicht Stunden</b> bei den meisten Aufgaben: eine Session pro logischer Arbeitseinheit.</li>
+    <li><b>Pro Konto oder Aufgabe fixieren, nicht pro Worker.</b> Teilen zwei Worker eine feste Adresse,
+    haben Sie genau das Parallelitätsproblem nachgebaut, das Sie vermeiden wollten.</li>
+    <li><b>Session beim ersten harten Fehler verwerfen.</b> Auf einer bereits herausgeforderten Adresse
+    weiterzumachen verbrennt Anfragen.</li>
+  </ul>
+
+  <h2>Wo Ihr eigener Stack Sie verrät</h2>
+  <p>Fast jeder Bericht „Sticky funktioniert nicht“ stammt vom Client: Connection-Pooling mit fremder
+  Session-ID, asynchroner Code mit parallelen Anfragen in einer logischen Session, eine
+  Wiederholungsschicht, die ohne Absprache eine neue Adresse nimmt, oder Session-IDs pro Anfrage statt
+  pro Aufgabe.</p>
+  <p>Protokollieren Sie vor jedem Schuldzuweisung die Ausgangs-IP bei jeder Anfrage eines Ablaufs und
+  prüfen Sie, ob sie hielt. Anbieter, die die zugewiesene Adresse pro Session offenlegen, machen daraus
+  eine Zwei-Minuten-Prüfung: IPRoyal etwa erlaubt es,
+  <a data-out="iproyal" href="https://iproyal.com/">eine Session-ID und ein Land gezielt anzufordern</a> —
+  die Adresse ist damit reproduzierbar statt geraten.</p>
+
+  <h2>Wahl nach Aufgabe</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Aufgabe</th><th>Modus</th><th>Warum</th></tr></thead>
+      <tbody>
+        <tr><td>Öffentliche Kataloge</td><td class="good">Rotierend</td><td>Unabhängige Anfragen, Last verteilen</td></tr>
+        <tr><td>Suchergebnisseiten</td><td>Rotierend mit Backoff</td><td>Unabhängig, aber ratenempfindlich</td></tr>
+        <tr><td>Angemeldete Dashboards</td><td class="good">Sticky</td><td>Kontinuität ist der ganze Zweck</td></tr>
+        <tr><td>Checkout oder Buchungen</td><td class="good">Sticky</td><td>Rotieren mittendrin bricht die Session</td></tr>
+        <tr><td>Eine Challenge, dann browsen</td><td class="good">Sticky</td><td>Die vertraute Adresse behalten</td></tr>
+        <tr><td>Wiederholung nach Sperre</td><td>Sofort rotieren</td><td>Die aktuelle Adresse ist verbrannt</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="takeaway">
+    <h3>Kurzfassung</h3>
+    <ul>
+      <li>Rotierend für unabhängige Anfragen, Sticky für alles, woran sich die Seite erinnert.</li>
+      <li>Rotieren innerhalb einer Session wirft keinen Fehler — es verfälscht Daten still.</li>
+      <li>Eine Sticky Session pro Arbeitseinheit, verworfen beim ersten harten Fehler.</li>
+      <li>Prüfen Sie, ob die Ausgangs-IP über den ganzen Ablauf hielt, bevor Sie den Anbieter
+      beschuldigen.</li>
+    </ul>
+  </div>
+
+  <p class="small">Letzte Prüfung: September 2026. Funktionen und Limits unterscheiden sich je nach
+  Tarif — prüfen Sie die Anbieterseite.</p>
+
+  <p class="small sponsored-note" hidden>Einige Links auf dieser Seite sind monetarisiert. Sie tragen
+  <code>rel="sponsored"</code> und beeinflussen die Empfehlungen nicht.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Start</a>
+        <a href="warum-dein-proxy-blockiert-wird.html">Blockierungen</a>
+        <a href="../rotating-vs-sticky-sessions.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — unabhängige Notizen. Einige ausgehende
+    Links sind Affiliate-Links.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>
