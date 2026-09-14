@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 320" role="img"
+     aria-label="Two session modes side by side: rotating addresses versus a pinned sticky address">
+  <defs>
+    <linearGradient id="sBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#60a5fa"/>
+    </linearGradient>
+    <linearGradient id="sViolet" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6d28d9"/><stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="sBlob" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#2563eb" stop-opacity=".04"/>
+    </linearGradient>
+    <filter id="sSoft" x="-40%" y="-40%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0b1220" flood-opacity=".15"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="320" fill="none"/>
+  <circle cx="600" cy="60" r="250" fill="url(#sBlob)"/>
+
+  <g filter="url(#sSoft)">
+    <rect x="130" y="58" width="440" height="204" rx="24" fill="#fff" stroke="#e3e8ef"/>
+    <text x="166" y="106" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="21"
+          font-weight="700" fill="#0b1220">Rotating</text>
+    <g fill="none" stroke="url(#sBlue)" stroke-width="10" stroke-linecap="round">
+      <path d="M196 186a74 74 0 0 1 118-58"/>
+      <path d="M470 186a74 74 0 0 1-118 58"/>
+    </g>
+    <path d="M314 114l18 16-24 10z" fill="#2563eb"/>
+    <path d="M352 258l-18-16 24-10z" fill="#2563eb"/>
+    <circle cx="333" cy="186" r="18" fill="#eef4ff" stroke="#2563eb" stroke-width="4"/>
+    <rect x="166" y="222" width="120" height="12" rx="6" fill="#c9d5e6"/>
+    <rect x="166" y="242" width="88" height="12" rx="6" fill="#e2e9f3"/>
+  </g>
+
+  <g filter="url(#sSoft)">
+    <rect x="630" y="58" width="440" height="204" rx="24" fill="#fff" stroke="#e3e8ef"/>
+    <text x="666" y="106" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="21"
+          font-weight="700" fill="#0b1220">Sticky</text>
+    <circle cx="850" cy="186" r="52" fill="#f3efff" stroke="#6d28d9" stroke-width="5"/>
+    <path d="M850 214v-46" stroke="#6d28d9" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="850" cy="158" r="14" fill="url(#sViolet)"/>
+    <path d="M850 186c-24 0-38 14-38 30h76c0-16-14-30-38-30z" fill="url(#sViolet)" opacity=".55"/>
+    <rect x="666" y="222" width="150" height="12" rx="6" fill="#c9d5e6"/>
+    <rect x="666" y="242" width="104" height="12" rx="6" fill="#e2e9f3"/>
+    <text x="940" y="192" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="19"
+          fill="#5b6675">same IP</text>
+  </g>
+</svg>

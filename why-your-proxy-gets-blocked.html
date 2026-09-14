@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Why your proxy gets blocked: seven real reasons — ProxyStack</title>
+<meta name="description" content="Blocking is rarely about the IP alone. Rate, behaviour, ASN reputation, fingerprint and reuse — how to tell which layer is failing you and what actually fixes it.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/why-your-proxy-gets-blocked.html">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why your proxy gets blocked: seven real reasons">
+<meta property="og:description" content="Rate, behaviour, ASN reputation, fingerprint, reuse — how to tell which layer is failing you.">
+<meta property="og:image" content="https://ostrovde.github.io/proxystack/assets/img/og-cover.png">
+<meta property="og:url" content="https://ostrovde.github.io/proxystack/why-your-proxy-gets-blocked.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+      <a href="index.html#notes">Notes</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="assets/img/g-blocked.svg" width="1200" height="320"
+      alt="A blocked request returning 403, next to a rising request-rate chart"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Diagnostics</p>
+  <h1>Why your proxy gets blocked: seven real reasons</h1>
+  <p class="lede">“My proxies are blocked” is a symptom, not a diagnosis. Blocking happens in layers,
+  and the layer you blame first is usually not the one failing. Here is the order to check them in.</p>
+
+  <div class="note"><b>Affiliate disclosure:</b> some outbound links here are affiliate links. If you
+  buy through one we may earn a commission at no extra cost to you, and such links are marked as
+  sponsored. It does not change what we recommend.</div>
+
+  <h2>1. Rate and concurrency</h2>
+  <p>The most common cause, and the one people skip. Ten requests per second from one address gets you
+  limited even from a pristine residential IP. If failures start after N requests — not after a
+  geographic pattern — this is your layer.</p>
+  <p><b>Fix:</b> lower concurrency, spread across more addresses, add jitter to your delays. Randomised
+  pauses beat fixed sleeps, because fixed intervals are themselves a pattern.</p>
+
+  <h2>2. Behaviour that no human would produce</h2>
+  <p>Identical headers, no cookies, no referrer, perfect sequence, requests at machine-like intervals.
+  A detector does not need your IP to see this — it only needs your request log.</p>
+  <p><b>Fix:</b> send realistic headers, keep a cookie jar, follow a plausible path through the site
+  instead of jumping straight to deep pages.</p>
+
+  <h2>3. ASN reputation — where datacenter addresses lose</h2>
+  <p>The blocking rule is usually not “this IP is banned” but “this whole network belongs to a hosting
+  provider”. Any site can look that up. This is the one cause that a different pool genuinely fixes.</p>
+  <p><b>Fix:</b> move to ISP/static residential or residential addresses — the middle tier is often
+  enough. See <a href="residential-vs-datacenter-proxies.html">which proxy type you actually need</a>
+  before you overpay for the top tier.</p>
+
+  <h2>4. Fingerprint contradicting your headers</h2>
+  <p>You claim to be Chrome on Windows, but the TLS handshake and browser fingerprint say Python
+  requests. Everything else can be perfect and this alone gets you challenged.</p>
+  <p><b>Fix:</b> use a real browser engine when the target defends seriously, or at least align the
+  client with the identity it claims.</p>
+
+  <h2>5. Inherited history on shared pools</h2>
+  <p>On shared residential networks you do not inherit only the address — you inherit what other
+  people did with it. Two identical setups can behave differently purely because of who used the IP
+  before you.</p>
+  <p><b>Fix:</b> rotate within the pool on failure instead of retrying the same address; prefer
+  providers that let you exclude subnets or require fresh sessions.</p>
+
+  <h2>6. Your own retry policy</h2>
+  <p>A naive retry loop multiplies load exactly when the target is already unhappy with you. Five
+  instant retries turn a soft throttle into a hard block.</p>
+  <p><b>Fix:</b> exponential backoff with jitter, a circuit breaker per address, and a cap on attempts
+  per URL. Treat 429 and 503 as signals, not as random failures.</p>
+
+  <h2>7. Concurrency against a session that must stay consistent</h2>
+  <p>If a flow spans several requests, parallelising them across different exit addresses breaks the
+  session — and the site responds as if you are doing something hostile, because from its side you
+  are.</p>
+  <p><b>Fix:</b> pin one address per session and keep the requests sequential inside it. This is what
+  sticky sessions exist for; see
+  <a href="rotating-vs-sticky-sessions.html">rotating vs sticky sessions</a>.</p>
+
+  <h2>How to tell the layers apart in ten minutes</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Symptom</th><th>Most likely layer</th></tr></thead>
+      <tbody>
+        <tr><td>Works, then fails after N requests or M minutes</td><td>Rate / concurrency</td></tr>
+        <tr><td>Works on one pool, fails on another for the same target</td><td>ASN reputation</td></tr>
+        <tr><td>Fails immediately, every request, every address</td><td>Fingerprint or headers</td></tr>
+        <tr><td>Fails only on some addresses, randomly</td><td>IP reuse / inherited history</td></tr>
+        <tr><td>Fails only in multi-step flows</td><td>Session consistency</td></tr>
+        <tr><td>Gets worse the more you retry</td><td>Your retry policy</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Before you buy a bigger pool</h2>
+  <p>Run the test in <a href="how-to-test-a-proxy-before-you-buy.html">how to test a proxy before you
+  buy it</a>. If your success rate is between 70% and 95%, the problem is almost always configuration —
+  and a more expensive pool will hide it for a week and then fail the same way.</p>
+  <p>If you need a different address class to test the ASN hypothesis, that is the one case where a new
+  purchase is the experiment. IPRoyal, for example, offers
+  <a data-out="iproyal" href="https://iproyal.com/">datacenter, ISP and residential pools</a> under one
+  account, which makes that comparison possible without signing three contracts. Judge them by cost
+  per successful page, not by the number on the pricing page.</p>
+
+  <div class="takeaway">
+    <h3>Short version</h3>
+    <ul>
+      <li>Blocking is layered. Blame rate, behaviour and fingerprint before you blame the pool.</li>
+      <li>ASN reputation is the only cause a different address class genuinely fixes.</li>
+      <li>Log response codes separately so each layer gets its own answer.</li>
+      <li>Fix retries and session handling first — they are free, and they are usually the problem.</li>
+    </ul>
+  </div>
+
+  <p class="small">Last reviewed: September 2026. Scraping rules differ by site and jurisdiction —
+  respect terms of service and local law.</p>
+
+  <p class="small sponsored-note" hidden>Some links on this page are monetised. They carry
+  <code>rel="sponsored"</code> and never affect what is recommended above.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+        <a href="how-to-test-a-proxy-before-you-buy.html">Testing</a>
+        <a href="index.html#about">About</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — independent notes. Some outbound
+    links are affiliate links; see the disclosure above.</p>
+  </div>
+</footer>
+
+<script src="assets/links.js" defer></script>
+</body>
+</html>

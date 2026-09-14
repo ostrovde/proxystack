@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proxy pricing explained: per GB vs per IP, and where you overpay — ProxyStack</title>
+<meta name="description" content="Why per-gigabyte and per-IP proxies are not comparable at face value: the four costs that hide between them, and how to compute cost per successful page for your own workload.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/proxy-pricing-per-gb-vs-per-ip.html">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Proxy pricing explained: per GB vs per IP, and where you overpay">
+<meta property="og:description" content="The four costs that hide between per-gigabyte and per-IP billing, and how to compute cost per successful page.">
+<meta property="og:image" content="https://ostrovde.github.io/proxystack/assets/img/og-cover.png">
+<meta property="og:url" content="https://ostrovde.github.io/proxystack/proxy-pricing-per-gb-vs-per-ip.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+      <a href="index.html#notes">Notes</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="assets/img/g-proxies.svg" width="1200" height="320"
+      alt="Datacenter and residential proxy options compared side by side"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Economics</p>
+  <h1>Proxy pricing explained: per GB vs per IP, and where you overpay</h1>
+  <p class="lede">Two providers can look wildly different on price and cost you exactly the same.
+  The reason is that per-gigabyte and per-IP billing pay for different things — and four costs hide
+  in the gap between them.</p>
+
+  <div class="note"><b>Affiliate disclosure:</b> some outbound links here are affiliate links. If you
+  buy through one we may earn a commission at no extra cost to you, and such links are marked as
+  sponsored. It does not change what we recommend.</div>
+
+  <h2>What each model actually charges for</h2>
+  <p><b>Per IP</b> (usually datacenter and ISP proxies): you rent a fixed number of addresses per
+  month. Volume is effectively unlimited, but your concurrency is capped by how many addresses you
+  hold.</p>
+  <p><b>Per GB</b> (usually residential and mobile): you rent traffic. Address count is effectively
+  unlimited, but every byte you pull has a price — including the bytes you never read.</p>
+
+  <h2>Cost 1 — bytes you never use</h2>
+  <p>On per-GB billing you pay for the whole response: HTML, images, fonts, CSS, third-party trackers,
+  analytics beacons. Blocking images, fonts and scripts typically removes the majority of the payload
+  while your parser sees the same data.</p>
+  <p>This is not a micro-optimisation. On a content-heavy target it can be the difference between a
+  workable budget and a project that looks unaffordable.</p>
+
+  <h2>Cost 2 — failed requests are billable</h2>
+  <p>A blocked request still consumed bytes. A challenge page still consumed bytes. A pool that fails
+  40% of the time is not cheap at any headline rate, because you paid twice for every usable result:
+  once for the failure, once for the success.</p>
+  <p>This is why success rate belongs in the price comparison, not in a separate column.</p>
+
+  <h2>Cost 3 — retries, and the concurrency you buy to avoid them</h2>
+  <p>Retries multiply traffic. Concurrency to work around slow responses multiplies address usage.
+  Both are invisible on the pricing page and very visible on the invoice.</p>
+
+  <h2>Cost 4 — engineering time</h2>
+  <p>The cheapest pool that requires custom session handling, manual rotation and constant babysitting
+  is not the cheapest pool. If one provider costs an hour a week more than another, that hour usually
+  costs more than the difference in traffic fees.</p>
+
+  <h2>The only comparable number: cost per successful page</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Input</th><th>Where you get it</th></tr></thead>
+      <tbody>
+        <tr><td>Spend for the test window</td><td>Your invoice or the trial amount</td></tr>
+        <tr><td>Requests attempted</td><td>Your job log</td></tr>
+        <tr><td>Usable responses</td><td>Parsed and validated, not just HTTP 200</td></tr>
+        <tr><td>Traffic consumed</td><td>Provider dashboard, in GB</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Then: <b>cost per successful page = spend ÷ validated results</b>. Compare that figure only.
+  Everything else on a pricing page is an input, not an answer.</p>
+
+  <h2>Worked comparison (illustrative)</h2>
+  <p>Suppose a datacenter pool at a flat monthly price handles 200 000 pages reliably, and a
+  residential pool billed per GB handles the same 200 000 but fails on 20% of your hard URLs and pulls
+  heavy pages. The datacenter option looks crude; on cost per successful page it often wins by a wide
+  margin — unless the hard 20% is the data you actually needed, in which case neither number is
+  relevant and you need a split setup.</p>
+  <p>That is the real conclusion for most teams: <b>use cheap addresses for the easy majority and
+  residential only for the minority that requires it</b>. Mixing tiers is usually cheaper than
+  buying the top tier for everything.</p>
+
+  <h2>Practical order of operations</h2>
+  <ol>
+    <li>Instrument your job: attempts, validated results, GB consumed, per target group.</li>
+    <li>Block images, fonts and third-party scripts; measure the saving before changing providers.</li>
+    <li>Split targets into "easy" and "defended" using real success rates, not guesses.</li>
+    <li>Route the easy majority to the cheapest adequate tier; reserve residential for the defended
+    minority.</li>
+    <li>Re-measure monthly. Pool quality and target defences both drift.</li>
+  </ol>
+  <p>Most providers offer several tiers under one account, which makes this split straightforward
+  instead of requiring multiple contracts — IPRoyal, for instance, sells
+  <a data-out="iproyal" href="https://iproyal.com/">datacenter, ISP and residential pools</a> side by
+  side, so you can route per target group and see the difference in one dashboard.</p>
+
+  <div class="takeaway">
+    <h3>Short version</h3>
+    <ul>
+      <li>Per IP buys capacity; per GB buys traffic. They are not comparable at face value.</li>
+      <li>Four costs hide in the gap: unused bytes, failed requests, retries, engineering time.</li>
+      <li>Compare cost per successful page — nothing else.</li>
+      <li>Cheapest adequate tier for the easy majority, residential for the defended minority.</li>
+    </ul>
+  </div>
+
+  <p class="small">Last reviewed: September 2026. Prices, tiers and limits change often — confirm
+  current figures on the vendor's own pricing page. Figures here are illustrative and deliberately not
+  quoted as current vendor prices.</p>
+
+  <p class="small sponsored-note" hidden>Some links on this page are monetised. They carry
+  <code>rel="sponsored"</code> and never affect what is recommended above.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+        <a href="how-to-test-a-proxy-before-you-buy.html">Testing</a>
+        <a href="why-your-proxy-gets-blocked.html">Blocking</a>
+        <a href="rotating-vs-sticky-sessions.html">Sessions</a>
+        <a href="index.html#about">About</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — independent notes. Some outbound
+    links are affiliate links; see the disclosure above.</p>
+  </div>
+</footer>
+
+<script src="assets/links.js" defer></script>
+</body>
+</html>

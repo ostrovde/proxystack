@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotating vs sticky sessions: when each one breaks — ProxyStack</title>
+<meta name="description" content="Rotating addresses and sticky sessions solve opposite problems. How to choose per task, how long a sticky session should live, and the failure mode that silently corrupts your data.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/rotating-vs-sticky-sessions.html">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rotating vs sticky sessions: when each one breaks">
+<meta property="og:description" content="How to choose per task, how long a sticky session should live, and the failure mode that silently corrupts your data.">
+<meta property="og:image" content="https://ostrovde.github.io/proxystack/assets/img/og-cover.png">
+<meta property="og:url" content="https://ostrovde.github.io/proxystack/rotating-vs-sticky-sessions.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+      <a href="index.html#notes">Notes</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="assets/img/g-sessions.svg" width="1200" height="320"
+      alt="Two session modes side by side: rotating addresses versus a pinned sticky address"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Infrastructure</p>
+  <h1>Rotating vs sticky sessions: when each one breaks</h1>
+  <p class="lede">These two settings solve opposite problems, and picking the wrong one produces a
+  failure that is hard to see: your code runs, your requests return 200, and your data is quietly
+  wrong.</p>
+
+  <div class="note"><b>Affiliate disclosure:</b> some outbound links here are affiliate links. If you
+  buy through one we may earn a commission at no extra cost to you, and such links are marked as
+  sponsored. It does not change what we recommend.</div>
+
+  <h2>The one-line difference</h2>
+  <p><b>Rotating</b> gives you a different exit IP per request. <b>Sticky</b> gives you the same exit
+  IP for the duration of a session. Same pool, same price, opposite behaviour — and the correct
+  choice depends entirely on whether the target remembers you between requests.</p>
+
+  <h2>Use rotating when every request is independent</h2>
+  <ul>
+    <li>Fetching product or listing pages that anyone can see without logging in.</li>
+    <li>Collecting public data where nothing carries over between pages.</li>
+    <li>High-volume crawling where the goal is to spread load across many addresses.</li>
+  </ul>
+  <p>Rotating spreads your footprint and reduces per-address rate, which is exactly what you want when
+  no request depends on another.</p>
+
+  <h2>Use sticky when the target tracks you</h2>
+  <ul>
+    <li>Anything behind a login, where a mid-flow IP change looks like session hijacking.</li>
+    <li>Multi-step flows: cart, checkout, booking, forms.</li>
+    <li>Sites that issue a challenge you must solve once, then trust the address afterwards.</li>
+    <li>Rate limits applied per address, where switching addresses resets your progress.</li>
+  </ul>
+
+  <h2>The silent failure mode</h2>
+  <p>The expensive mistake is rotating inside a session that needs continuity. Nothing crashes. What
+  happens instead:</p>
+  <ol>
+    <li>A session rotates mid-flow, so the site treats the next request as a new, unauthenticated
+    visitor.</li>
+    <li>You get a login page or a challenge — with HTTP 200, because the server answered
+    successfully.</li>
+    <li>Your parser accepts it and records empty or default values as if they were real.</li>
+  </ol>
+  <p>You discover it weeks later in a dataset that looks complete and is not. Validate responses
+  against a known-good marker, not just against a status code.</p>
+
+  <h2>How long should a sticky session live</h2>
+  <p>Long enough for the flow, short enough that you are not reusing a burned address. In practice:</p>
+  <ul>
+    <li><b>Minutes, not hours</b>, for most tasks — one session per logical unit of work.</li>
+    <li><b>Pin per account/task, not per worker.</b> If two workers share one sticky address, you have
+    recreated the concurrency problem you were avoiding.</li>
+    <li><b>Drop the session on the first hard failure.</b> Continuing on an address that just got
+    challenged wastes requests.</li>
+  </ul>
+
+  <h2>Where your own stack betrays you</h2>
+  <p>Most "sticky doesn't work" reports are client-side, not provider-side:</p>
+  <ul>
+    <li>Connection pooling that reuses a socket with a different session ID attached.</li>
+    <li>Async code that fires parallel requests inside one logical session.</li>
+    <li>A retry layer that grabs a new address without telling the session manager.</li>
+    <li>Session IDs generated per request instead of per task.</li>
+  </ul>
+  <p>Before blaming the pool, log the exit IP on every request of one flow and confirm it held. A
+  provider that exposes the assigned address per session makes this a two-minute check — IPRoyal, for
+  example, lets you <a data-out="iproyal" href="https://iproyal.com/">request a specific session ID and
+  country</a> so the address is reproducible rather than guessed.</p>
+
+  <h2>Choosing per task — a short table</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Task</th><th>Mode</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Public catalogue pages</td><td class="good">Rotating</td><td>Independent requests, spread the load</td></tr>
+        <tr><td>Search result pages</td><td>Rotating, with backoff</td><td>Independent, but rate-sensitive</td></tr>
+        <tr><td>Logged-in dashboards</td><td class="good">Sticky</td><td>Continuity is the whole point</td></tr>
+        <tr><td>Checkout / booking flows</td><td class="good">Sticky</td><td>Rotating mid-flow breaks the session</td></tr>
+        <tr><td>Single challenge, then browse</td><td class="good">Sticky</td><td>Keep the trusted address</td></tr>
+        <tr><td>Retry after a block</td><td>Rotate now</td><td>The current address is spent</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="takeaway">
+    <h3>Short version</h3>
+    <ul>
+      <li>Rotating for independent requests; sticky for anything the site remembers.</li>
+      <li>Rotating inside a session does not error — it silently corrupts data.</li>
+      <li>One sticky session per unit of work, dropped on first hard failure.</li>
+      <li>Verify the exit IP held across a whole flow before blaming the provider.</li>
+    </ul>
+  </div>
+
+  <p class="small">Last reviewed: September 2026. Features and limits differ by provider tier —
+  confirm on the vendor's own page.</p>
+
+  <p class="small sponsored-note" hidden>Some links on this page are monetised. They carry
+  <code>rel="sponsored"</code> and never affect what is recommended above.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+        <a href="how-to-test-a-proxy-before-you-buy.html">Testing</a>
+        <a href="why-your-proxy-gets-blocked.html">Blocking</a>
+        <a href="index.html#about">About</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — independent notes. Some outbound
+    links are affiliate links; see the disclosure above.</p>
+  </div>
+</footer>
+
+<script src="assets/links.js" defer></script>
+</body>
+</html>

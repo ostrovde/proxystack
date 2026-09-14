@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to test a proxy before you buy it — ProxyStack</title>
+<meta name="description" content="A practical pre-purchase test for proxy pools: what to measure, why latency is the wrong metric, how to detect leaks, and the week-two re-test most people skip.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/how-to-test-a-proxy-before-you-buy.html">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to test a proxy before you buy it">
+<meta property="og:description" content="What to measure, why latency is the wrong metric, how to detect leaks, and the re-test most people skip.">
+<meta property="og:image" content="https://ostrovde.github.io/proxystack/assets/img/og-cover.png">
+<meta property="og:url" content="https://ostrovde.github.io/proxystack/how-to-test-a-proxy-before-you-buy.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+      <a href="index.html#notes">Notes</a>
+      <a href="index.html#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="assets/img/g-test.svg" width="1200" height="320"
+      alt="A success-rate gauge next to a checklist of proxy tests with pass marks"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Guide</p>
+  <h1>How to test a proxy before you buy it</h1>
+  <p class="lede">Proxy sellers publish benchmarks that flatter their own pools. You cannot verify
+  those, but you can run a test that matters in about an hour — and it is the difference between
+  buying the right pool once and buying three wrong ones.</p>
+
+  <div class="note"><b>Affiliate disclosure:</b> some outbound links here are affiliate links. If you
+  buy through one we may earn a commission at no extra cost to you, and such links are marked as
+  sponsored. It does not change what we recommend.</div>
+
+  <h2>Rule one: measure success, not speed</h2>
+  <p>The default mistake is benchmarking latency. A pool that answers in 200&nbsp;ms with a challenge
+  page is slower <i>for your purpose</i> than one that answers in 1.5&nbsp;s with real content,
+  because the fast one produced nothing you can use.</p>
+  <p>The only metric that survives contact with production is <b>cost per successfully parsed
+  page</b>: how many usable results you got, divided by what you spent to get them.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Metric</th><th>Useful?</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Latency (ms)</td><td class="bad">No</td><td>Measures the wrong thing; fast failures look great</td></tr>
+        <tr><td>Success rate on your URLs</td><td class="good">Yes</td><td>The number that decides whether the pool works</td></tr>
+        <tr><td>Cost per successful page</td><td class="good">Yes</td><td>Combines price and failure rate into one figure</td></tr>
+        <tr><td>Pool size ("64M IPs")</td><td class="bad">No</td><td>Marketing number; says nothing about your targets</td></tr>
+        <tr><td>Consumed GB vs useful GB</td><td class="good">Yes</td><td>On per-GB billing this is your real efficiency</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Rule two: test the pages you actually need</h2>
+  <p>A provider's homepage and a category listing are rarely protected the same way as a product
+  detail page, a search result or an API behind a challenge. Take <b>50–200 real target URLs</b>
+  from your own list — including the awkward ones — and run them through the trial pool.</p>
+  <p>If you only test the easy pages, every pool passes and the test taught you nothing.</p>
+
+  <h2>Rule three: run it twice, a week apart</h2>
+  <p>Pool quality drifts. Residential networks are peer-to-peer: the addresses you were assigned on
+  day one may behave differently on day eight, and the peers behind them change. A single snapshot is
+  not a verdict — it is a first impression.</p>
+  <p>Providers that survive the second test are the ones worth a real contract.</p>
+
+  <h2>The pre-purchase checklist</h2>
+  <ol>
+    <li><b>Buy the smallest amount that supports a real test.</b> Every serious provider allows a
+    trial-sized purchase. A plan you cannot finish is a plan you overpaid for.</li>
+    <li><b>Confirm what you are actually assigned.</b> Check the exit IP against a lookup, not just
+    the country name in the dashboard. Country-level targeting is not city-level targeting, and the
+    difference shows up in the results.</li>
+    <li><b>Check what leaks.</b> Headers, DNS resolution, WebRTC. A proxy that leaks your real address
+    is worse than no proxy, because you believe you are covered.</li>
+    <li><b>Test sticky sessions end to end.</b> Log in, walk three steps, confirm the same address
+    held. Sessions that silently rotate mid-flow break everything downstream.</li>
+    <li><b>Log every response code.</b> Not "blocked or not" — separate 200, 403, 429, 503 and
+    challenge pages. A pool that returns 429 under load is a concurrency problem, not a pool problem,
+    and you would have blamed the wrong thing.</li>
+    <li><b>Count consumed traffic against useful traffic.</b> If 4&nbsp;MB goes out to deliver a
+    40&nbsp;KB JSON response, you are paying for images, fonts and trackers you never read.</li>
+  </ol>
+
+  <h2>Free starting point</h2>
+  <p>You do not need paid tooling for the first pass. A proxy checker and a leak test will tell you
+  whether the address you were given is what you think it is, and whether your own client is
+  misconfigured. Some providers publish these tools themselves — IPRoyal, for instance, offers a
+  <a data-out="iproyal" href="https://iproyal.com/">proxy tester, checker and WebRTC leak test</a>
+  alongside its paid pools. They are useful for evaluation whatever you end up buying, which is the
+  only reason we mention them here.</p>
+
+  <h2>What to do with the results</h2>
+  <ul>
+    <li><b>Above ~95% success on your hard URLs:</b> the pool is doing its job. Optimise cost, not
+    providers.</li>
+    <li><b>70–95%:</b> usually a configuration problem — concurrency, headers, session handling —
+    before it is a pool problem. Fix that first, then re-test.</li>
+    <li><b>Below 70%:</b> the pool is wrong for these targets. Either move up a tier (datacenter →
+    ISP → residential) or accept that this target needs a different approach entirely.</li>
+  </ul>
+
+  <div class="takeaway">
+    <h3>Short version</h3>
+    <ul>
+      <li>Test with your own URLs, including the hard ones.</li>
+      <li>Judge by success rate and cost per successful page, never by latency or pool size.</li>
+      <li>Check for leaks and sticky-session integrity, not just "does it connect".</li>
+      <li>Re-test after a week, and log response codes separately so you fix the right layer.</li>
+    </ul>
+  </div>
+
+  <p class="small">Last reviewed: September 2026. Confirm current pool, limits and pricing on the
+  vendor's own page. Scraping rules differ by site and jurisdiction — respect terms of service and
+  local law.</p>
+
+  <p class="small sponsored-note" hidden>Some links on this page are monetised. They carry
+  <code>rel="sponsored"</code> and never affect what is recommended above.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+        <a href="index.html#about">About</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — independent notes. Some outbound
+    links are affiliate links; see the disclosure above.</p>
+  </div>
+</footer>
+
+<script src="assets/links.js" defer></script>
+</body>
+</html>
