@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proxy cost calculator: cost per successful page — ProxyStack</title>
+<meta name="description" content="Work out what a proxy pool really costs you: traffic, retries, engineering time — and the cost per successfully parsed page for per-GB versus per-IP billing.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/proxy-cost-calculator.html">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Proxy cost calculator: cost per successful page">
+<meta property="og:description" content="Traffic, retries and time — and the cost per successfully parsed page for per-GB versus per-IP billing.">
+<meta property="og:image" content="https://ostrovde.github.io/proxystack/assets/img/og-cover.png">
+<meta property="og:url" content="https://ostrovde.github.io/proxystack/proxy-cost-calculator.html">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="residential-vs-datacenter-proxies.html">Proxy types</a>
+      <a href="proxy-cost-calculator.html">Calculator</a>
+      <a href="index.html#notes">Notes</a>
+      <a href="index.html#about">About</a>
+      <a href="es/index.html">ES</a>
+      <a href="pt/index.html">PT</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap article">
+  <p class="kicker">Tool</p>
+  <h1>Proxy cost calculator: what one successful page actually costs</h1>
+  <p class="lede">Provider pricing pages quote a rate. What decides your budget is the cost per page you
+  actually got — after failures, retries and the bytes you never needed. This tool does that arithmetic
+  for you.</p>
+
+  <div class="note"><b>Affiliate disclosure:</b> some outbound links on this site are affiliate links,
+  marked as sponsored. It does not change what we recommend.</div>
+
+  <div class="note warn"><b>These are estimates, not quotes.</b> Enter prices from your own vendor's
+  current page. The tool shows its formulas at the bottom so you can check every number.</div>
+
+  <div class="calc">
+    <div class="calc-grid">
+      <div class="field">
+        <label for="pages">Pages you need per month <span class="hint">successful, parsed results</span></label>
+        <input id="pages" type="number" min="0" step="1000" value="100000">
+      </div>
+      <div class="field">
+        <label for="weight">Average page weight <span class="hint">kilobytes, as the server sends it</span></label>
+        <input id="weight" type="number" min="1" step="50" value="900">
+      </div>
+      <div class="field">
+        <label for="blocked">Share of bytes you can avoid <span class="hint">% — blocking images, fonts, trackers</span></label>
+        <input id="blocked" type="number" min="0" max="95" step="5" value="60">
+      </div>
+      <div class="field">
+        <label for="success">Pool success rate <span class="hint">% of attempts that return real content</span></label>
+        <input id="success" type="number" min="1" max="100" step="1" value="90">
+      </div>
+      <div class="field">
+        <label for="pgb">Price per GB <span class="hint">per-GB pool, your vendor's rate</span></label>
+        <input id="pgb" type="number" min="0" step="0.1" value="3.5">
+      </div>
+      <div class="field">
+        <label for="pip">Price per IP / month <span class="hint">per-IP pool</span></label>
+        <input id="pip" type="number" min="0" step="0.1" value="2.5">
+      </div>
+      <div class="field">
+        <label for="ips">IPs you would rent <span class="hint">to hold your concurrency</span></label>
+        <input id="ips" type="number" min="0" step="1" value="10">
+      </div>
+      <div class="field">
+        <label for="hours">Your maintenance hours / month</label>
+        <input id="hours" type="number" min="0" step="0.5" value="2">
+      </div>
+      <div class="field">
+        <label for="rate">Your hourly rate <span class="hint">same currency as above</span></label>
+        <input id="rate" type="number" min="0" step="1" value="20">
+      </div>
+      <div class="field">
+        <label for="cur">Currency label <span class="hint">display only</span></label>
+        <input id="cur" type="text" value="$">
+      </div>
+    </div>
+
+    <div class="calc-out">
+      <h3>Result</h3>
+      <div class="big" id="cps">— <span>per successful page, per-GB pool</span></div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="k">Attempts needed</div><div class="v" id="attempts">—</div></div>
+        <div class="kpi"><div class="k">Traffic after blocking</div><div class="v" id="gb">—</div></div>
+        <div class="kpi"><div class="k">Traffic before blocking</div><div class="v" id="gbraw">—</div></div>
+      </div>
+
+      <div class="bars">
+        <div class="bar-row"><span>Per-GB total</span><span class="track"><span class="fill" id="barA"></span></span><span class="v" id="totA">—</span></div>
+        <div class="bar-row"><span>Per-IP total</span><span class="track"><span class="fill warn" id="barB"></span></span><span class="v" id="totB">—</span></div>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Cost line</th><th>Per-GB pool</th><th>Per-IP pool</th></tr></thead>
+          <tbody>
+            <tr><td>Proxy / traffic</td><td id="tA">—</td><td id="tB">—</td></tr>
+            <tr><td>Your time</td><td id="hA">—</td><td id="hB">—</td></tr>
+            <tr><td><b>Total per month</b></td><td id="sA">—</td><td id="sB">—</td></tr>
+            <tr><td><b>Per successful page</b></td><td id="pA">—</td><td id="dB">—</td></tr>
+            <tr><td>Per 1,000 successful pages</td><td id="kA">—</td><td id="kB">—</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="verdict" id="verdict">—</div>
+
+      <div class="formula">
+        <b>Formulas, so you can check the maths:</b><br>
+        <code>attempts = pages ÷ (success rate ÷ 100)</code><br>
+        <code>GB per attempt = weight × (1 − blocked ÷ 100) ÷ 1 048 576</code><br>
+        <code>traffic cost = attempts × GB per attempt × price per GB</code><br>
+        <code>per-IP cost = IPs × price per IP + your time</code><br>
+        <code>cost per successful page = total ÷ pages</code>
+      </div>
+    </div>
+  </div>
+
+  <h2>How to read the result</h2>
+  <ul>
+    <li><b>The “before blocking” line is the free win.</b> It is the traffic you are paying for today
+    without using it. Closing that gap costs engineering time once and reduces every future invoice.</li>
+    <li><b>Retries are already inside the attempts figure.</b> A 90% pool needs about 11% more requests
+    than you counted. A 70% pool needs 43% more — that is the hidden tax on a cheap pool.</li>
+    <li><b>Your time is a real cost line.</b> Set your rate honestly. A pool that needs two extra hours
+    a month is not cheap at any per-GB price.</li>
+    <li><b>Per-IP does not pay for failures in traffic</b>, but it does not give you unlimited
+    concurrency either — you rent addresses, and that is your ceiling.</li>
+  </ul>
+
+  <h2>Where the inputs come from</h2>
+  <p>Page weight: measure it, do not guess — most browsers show transferred size in the network panel.
+  Success rate: take it from a real test on your own URLs, as described in
+  <a href="how-to-test-a-proxy-before-you-buy.html">how to test a proxy before you buy it</a>. Prices:
+  from your vendor's current page; we deliberately do not quote vendor prices here because they change.
+  If you are comparing several address classes at once, providers that sell datacenter, ISP and
+  residential under one account — <a data-out="iproyal" href="https://iproyal.com/">as IPRoyal does</a> —
+  let you read the real numbers from a single dashboard instead of estimating.</p>
+
+  <p class="small">Estimates only. The tool makes no network requests: everything is computed in your
+  browser and nothing is sent anywhere.</p>
+
+  <p class="small sponsored-note" hidden>Some links on this page are monetised. They carry
+  <code>rel="sponsored"</code> and never affect what is recommended above.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Home</a>
+        <a href="proxy-pricing-per-gb-vs-per-ip.html">Pricing guide</a>
+        <a href="how-to-test-a-proxy-before-you-buy.html">Testing</a>
+        <a href="index.html#about">About</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — independent notes. Some outbound links
+    are affiliate links.</p>
+  </div>
+</footer>
+
+<script src="assets/links.js" defer></script>
+<script>
+(function () {
+  "use strict";
+  var ids = ["pages","weight","blocked","success","pgb","pip","ips","hours","rate","cur"];
+  function num(id) { var v = parseFloat(document.getElementById(id).value); return isFinite(v) ? v : 0; }
+  function money(x, cur) {
+    if (x === 0) return cur + "0";
+    if (x < 1) return cur + x.toFixed(4);
+    if (x < 1000) return cur + x.toFixed(2);
+    return cur + Math.round(x).toLocaleString("en-US");
+  }
+  function bytes(gb) {
+    if (gb >= 1000) return (gb / 1000).toFixed(2) + " TB";
+    if (gb >= 1) return gb.toFixed(1) + " GB";
+    return (gb * 1024).toFixed(0) + " MB";
+  }
+  function compute() {
+    var pages = num("pages"), weight = num("weight"), blocked = num("blocked");
+    var success = num("success"), pgb = num("pgb"), pip = num("pip");
+    var ips = num("ips"), hours = num("hours"), rate = num("rate");
+    var cur = document.getElementById("cur").value || "$";
+
+    var sr = Math.max(success, 1) / 100;
+    var attempts = sr > 0 ? pages / sr : 0;
+    var gbPerAttemptRaw = weight / 1048576;
+    var gbPerAttempt = gbPerAttemptRaw * (1 - Math.min(blocked, 95) / 100);
+    var gb = attempts * gbPerAttempt;
+    var gbRaw = attempts * gbPerAttemptRaw;
+
+    var timeCost = hours * rate;
+    var trafficCost = gb * pgb;
+    var ipCost = ips * pip;
+
+    var totalA = trafficCost + timeCost;
+    var totalB = ipCost + timeCost;
+
+    var cpsA = pages > 0 ? totalA / pages : 0;
+    var cpsB = pages > 0 ? totalB / pages : 0;
+
+    document.getElementById("attempts").textContent = Math.round(attempts).toLocaleString("en-US");
+    document.getElementById("gb").textContent = bytes(gb);
+    document.getElementById("gbraw").textContent = bytes(gbRaw);
+    document.getElementById("cps").innerHTML = money(cpsA, cur) +
+      ' <span>per successful page, per-GB pool</span>';
+
+    document.getElementById("tA").textContent = money(trafficCost, cur);
+    document.getElementById("tB").textContent = money(ipCost, cur);
+    document.getElementById("hA").textContent = money(timeCost, cur);
+    document.getElementById("hB").textContent = money(timeCost, cur);
+    document.getElementById("sA").textContent = money(totalA, cur);
+    document.getElementById("sB").textContent = money(totalB, cur);
+    document.getElementById("pA").textContent = money(cpsA, cur);
+    document.getElementById("dB").textContent = money(cpsB, cur);
+    document.getElementById("kA").textContent = money(cpsA * 1000, cur);
+    document.getElementById("kB").textContent = money(cpsB * 1000, cur);
+    document.getElementById("totA").textContent = money(totalA, cur);
+    document.getElementById("totB").textContent = money(totalB, cur);
+
+    var max = Math.max(totalA, totalB, 0.000001);
+    document.getElementById("barA").style.width = Math.max(2, (totalA / max) * 100) + "%";
+    document.getElementById("barB").style.width = Math.max(2, (totalB / max) * 100) + "%";
+
+    var v = document.getElementById("verdict"), text;
+    v.className = "verdict";
+    if (pages <= 0) {
+      text = "Enter how many pages you need per month.";
+    } else if (Math.abs(totalA - totalB) / max < 0.05) {
+      text = "The two routes come out within 5% of each other — pick on operational grounds " +
+             "(session handling, concurrency ceiling), not on price.";
+    } else if (totalA < totalB) {
+      text = "Per-GB billing is cheaper here by " + money(totalB - totalA, cur) + " per month. " +
+             "Note that raising the “share of bytes you can avoid” figure widens that gap further: " +
+             "on per-GB billing, every blocked image is money back.";
+      v.className = "verdict ok";
+    } else {
+      text = "Per-IP billing is cheaper here by " + money(totalA - totalB, cur) + " per month. " +
+             "Check that the address class is good enough for your targets before switching — " +
+             "a cheaper pool that fails more is not cheaper.";
+      v.className = "verdict warn";
+    }
+    v.textContent = text;
+  }
+  ids.forEach(function (id) {
+    var el = document.getElementById(id);
+    el.addEventListener("input", compute);
+    el.addEventListener("change", compute);
+  });
+  compute();
+})();
+</script>
+</body>
+</html>

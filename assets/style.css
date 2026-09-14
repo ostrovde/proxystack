@@ -216,3 +216,41 @@ footer a{color:var(--muted)}
 .foot-brand{display:flex;align-items:center;gap:9px;font-weight:700;color:var(--ink)}
 .foot-brand img{width:24px;height:24px;border-radius:7px}
 .foot-links{display:flex;flex-wrap:wrap;gap:16px}
+
+/* ---------- калькуляторы (общий движок) ---------- */
+.calc{border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;
+      box-shadow:var(--shadow-1);padding:22px;margin:24px 0}
+.calc-grid{display:grid;gap:16px}
+@media(min-width:640px){.calc-grid{grid-template-columns:1fr 1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13.5px;font-weight:600;color:var(--ink-2)}
+.field .hint{font-size:12.5px;color:var(--muted);font-weight:400}
+.field input,.field select{font:inherit;padding:11px 13px;border:1px solid var(--line);
+      border-radius:10px;background:#fff;color:var(--ink);width:100%}
+.field input:focus,.field select:focus{outline:none;border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(37,99,235,.14)}
+.calc-out{margin-top:22px;border-top:1px solid var(--line-2);padding-top:20px}
+.calc-out h3{margin:0 0 14px}
+.big{font-size:38px;font-weight:700;letter-spacing:-.02em;line-height:1.1;color:var(--ink)}
+.big span{font-size:16px;font-weight:500;color:var(--muted);letter-spacing:0}
+.kpis{display:grid;gap:12px;margin:16px 0 6px}
+@media(min-width:640px){.kpis{grid-template-columns:repeat(3,1fr)}}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:13px 15px;background:var(--soft)}
+.kpi .k{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+      font-weight:700}
+.kpi .v{font-size:20px;font-weight:700;color:var(--ink);margin-top:4px}
+.bars{display:grid;gap:10px;margin:14px 0 4px}
+.bar-row{display:grid;grid-template-columns:130px 1fr 90px;gap:10px;align-items:center;
+      font-size:13.5px}
+.bar-row .track{height:10px;border-radius:999px;background:var(--line-2);overflow:hidden}
+.bar-row .fill{display:block;height:100%;border-radius:999px;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.bar-row .fill.warn{background:linear-gradient(90deg,#f59e0b,#fbbf24)}
+.bar-row .v{text-align:right;font-weight:700;color:var(--ink-2)}
+.verdict{margin-top:16px;padding:14px 16px;border-radius:12px;font-size:14.5px;
+      border:1px solid var(--line);background:var(--soft);color:var(--ink-2)}
+.verdict.ok{border-color:#c8ead8;background:#e9f7ef}
+.verdict.warn{border-color:#f6e3bd;background:#fff7e8}
+.verdict.bad{border-color:#f3c6c6;background:#fdecec}
+.formula{margin-top:16px;font-size:13px;color:var(--muted)}
+.formula code{display:inline-block;margin:3px 0}
