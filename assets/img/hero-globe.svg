@@ -48,27 +48,27 @@
   <g filter="url(#hSoft)">
     <g>
       <rect x="86" y="236" width="264" height="88" rx="18" fill="#fff" stroke="#e3e8ef"/>
-      <text x="112" y="268" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="16"
-            fill="#5b6675" letter-spacing="1.2">REQUESTS / SEC</text>
-      <text x="112" y="304" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="32"
+      <text x="112" y="268" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="26"
+            fill="#5b6675" letter-spacing="1.2">REQ / SEC</text>
+      <text x="112" y="304" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="52"
             font-weight="700" fill="#0b1220">1 480</text>
       <rect x="244" y="288" width="86" height="10" rx="5" fill="#eef2f9"/>
       <rect x="244" y="288" width="66" height="10" rx="5" fill="#14b8a6"/>
     </g>
     <g>
       <rect x="140" y="356" width="264" height="88" rx="18" fill="#fff" stroke="#e3e8ef"/>
-      <text x="166" y="388" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="16"
+      <text x="166" y="388" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="26"
             fill="#5b6675" letter-spacing="1.2">SUCCESS RATE</text>
-      <text x="166" y="424" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="32"
+      <text x="166" y="424" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="52"
             font-weight="700" fill="#0f7b46">98.2%</text>
       <rect x="298" y="408" width="86" height="10" rx="5" fill="#eef2f9"/>
       <rect x="298" y="408" width="80" height="10" rx="5" fill="#22c55e"/>
     </g>
     <g>
       <rect x="196" y="474" width="240" height="76" rx="18" fill="#fff" stroke="#e3e8ef"/>
-      <text x="222" y="506" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="16"
+      <text x="222" y="506" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="26"
             fill="#5b6675" letter-spacing="1.2">BLOCKED</text>
-      <text x="222" y="536" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="28"
+      <text x="222" y="536" font-family="system-ui,Segoe UI,Roboto,sans-serif" font-size="44"
             font-weight="700" fill="#8a5a00">1.8%</text>
     </g>
   </g>
