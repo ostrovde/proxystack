@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Precio de proxies: por GB o por IP, y dónde pagas de más — ProxyStack</title>
+<meta name="description" content="Por qué el cobro por gigabyte y por IP no son comparables a primera vista: los cuatro costes ocultos entre ambos y cómo calcular el coste por página exitosa.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/es/precio-proxies-por-gb-vs-por-ip.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/proxy-pricing-per-gb-vs-per-ip.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/precio-proxies-por-gb-vs-por-ip.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/proxy-pricing-per-gb-vs-per-ip.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residenciales-vs-datacenter.html">Tipos de proxy</a>
+      <a href="index.html#notas">Notas</a>
+      <a href="index.html#acerca">Acerca de</a>
+      <a href="../index.html">EN</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-proxies.svg" width="1200" height="320"
+      alt="Comparación lado a lado de proxies de datacenter y residenciales"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Economía</p>
+  <h1>Precio de proxies: por GB o por IP, y dónde pagas de más</h1>
+  <p class="lede">Dos proveedores pueden parecer muy distintos en precio y costarte exactamente lo
+  mismo. La razón es que el cobro por gigabyte y por IP pagan cosas diferentes — y hay cuatro costes
+  escondidos en la diferencia.</p>
+
+  <div class="note"><b>Aviso de afiliación:</b> algunos enlaces externos son de afiliado, marcados como
+  patrocinados. No cambian lo que recomendamos.</div>
+
+  <h2>Qué cobra cada modelo</h2>
+  <p><b>Por IP</b> (normalmente datacenter e ISP): alquilas un número fijo de direcciones al mes. El
+  volumen es en la práctica ilimitado, pero tu concurrencia está limitada por cuántas direcciones
+  tienes.</p>
+  <p><b>Por GB</b> (normalmente residencial y móvil): alquilas tráfico. El número de direcciones es en
+  la práctica ilimitado, pero cada byte tiene precio — incluidos los bytes que nunca lees.</p>
+
+  <h2>Coste 1 — bytes que no usas</h2>
+  <p>Con cobro por GB pagas la respuesta completa: HTML, imágenes, fuentes, CSS, trackers de terceros.
+  Bloquear imágenes, fuentes y scripts suele eliminar la mayor parte del peso mientras tu parser ve los
+  mismos datos. No es una microoptimización: en un destino con mucho contenido puede ser la diferencia
+  entre un presupuesto viable y un proyecto que parece inasumible.</p>
+
+  <h2>Coste 2 — las peticiones fallidas también se facturan</h2>
+  <p>Una petición bloqueada consumió bytes. Una página de desafío también. Un pool que falla el 40% no
+  es barato a ningún precio de tarifa, porque pagaste dos veces por cada resultado útil.</p>
+
+  <h2>Coste 3 — reintentos y la concurrencia que compras para evitarlos</h2>
+  <p>Los reintentos multiplican el tráfico. La concurrencia para esquivar respuestas lentas multiplica
+  el uso de direcciones. Ambos son invisibles en la página de precios y muy visibles en la factura.</p>
+
+  <h2>Coste 4 — tiempo de ingeniería</h2>
+  <p>El pool más barato que exige gestión manual de sesiones, rotación a mano y vigilancia constante no
+  es el más barato. Si un proveedor te cuesta una hora semanal más que otro, esa hora suele costar más
+  que la diferencia en tráfico.</p>
+
+  <h2>El único número comparable: coste por página exitosa</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Dato</th><th>De dónde sale</th></tr></thead>
+      <tbody>
+        <tr><td>Gasto del periodo de prueba</td><td>Tu factura o el importe de la prueba</td></tr>
+        <tr><td>Peticiones intentadas</td><td>Tu registro de ejecución</td></tr>
+        <tr><td>Respuestas utilizables</td><td>Parseadas y validadas, no solo HTTP 200</td></tr>
+        <tr><td>Tráfico consumido</td><td>Panel del proveedor, en GB</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Después: <b>coste por página exitosa = gasto ÷ resultados validados</b>. Compara solo esa cifra.
+  Todo lo demás en una página de precios es un dato de entrada, no una respuesta.</p>
+
+  <h2>La conclusión real para casi todos los equipos</h2>
+  <p><b>Usa direcciones baratas para la mayoría fácil y residencial solo para la minoría que lo
+  exige.</b> Mezclar gamas suele salir más barato que comprar la gama alta para todo.</p>
+
+  <h2>Orden de operaciones</h2>
+  <ol>
+    <li>Instrumenta el trabajo: intentos, resultados validados, GB consumidos, por grupo de
+    objetivos.</li>
+    <li>Bloquea imágenes, fuentes y scripts de terceros; mide el ahorro antes de cambiar de
+    proveedor.</li>
+    <li>Divide los objetivos en «fáciles» y «defendidos» con tasas de éxito reales, no con
+    intuiciones.</li>
+    <li>Envía la mayoría fácil a la gama más barata que sirva; reserva la residencial para la minoría
+    defendida.</li>
+    <li>Vuelve a medir cada mes: la calidad del pool y las defensas del destino cambian.</li>
+  </ol>
+  <p>La mayoría de proveedores ofrecen varias gamas en una misma cuenta, lo que hace esta división
+  directa en lugar de exigir varios contratos — IPRoyal, por ejemplo, vende
+  <a data-out="iproyal" href="https://iproyal.com/">pools de datacenter, ISP y residencial</a> a la vez,
+  así que puedes enrutar por grupo de objetivos y ver la diferencia en un solo panel.</p>
+
+  <div class="takeaway">
+    <h3>Resumen</h3>
+    <ul>
+      <li>Por IP compras capacidad; por GB compras tráfico. No son comparables a primera vista.</li>
+      <li>Cuatro costes se esconden en la diferencia: bytes no usados, fallos, reintentos y tiempo.</li>
+      <li>Compara el coste por página exitosa — nada más.</li>
+      <li>Gama barata para la mayoría fácil, residencial para la minoría defendida.</li>
+    </ul>
+  </div>
+
+  <p class="small">Última revisión: septiembre de 2026. Los precios, gamas y límites cambian a menudo —
+  confirma las cifras en la página del proveedor. Las cifras aquí son ilustrativas y deliberadamente no
+  se presentan como precios actuales.</p>
+
+  <p class="small sponsored-note" hidden>Algunos enlaces de esta página están monetizados. Llevan
+  <code>rel="sponsored"</code> y nunca afectan a lo que se recomienda.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Inicio</a>
+        <a href="por-que-bloquean-tu-proxy.html">Bloqueos</a>
+        <a href="../proxy-pricing-per-gb-vs-per-ip.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — notas independientes. Algunos enlaces
+    externos son de afiliado.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>

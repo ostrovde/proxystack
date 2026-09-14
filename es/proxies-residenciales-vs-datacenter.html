@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proxies residenciales vs datacenter: cuál necesita tu scraper — ProxyStack</title>
+<meta name="description" content="La diferencia real entre proxies residenciales y de datacenter, cuándo pagar por IP residencial es dinero perdido, la trampa del precio por GB y cómo probar antes de comprar.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/es/proxies-residenciales-vs-datacenter.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/residential-vs-datacenter-proxies.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/proxies-residenciales-vs-datacenter.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/residential-vs-datacenter-proxies.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residenciales-vs-datacenter.html">Tipos de proxy</a>
+      <a href="index.html#notas">Notas</a>
+      <a href="index.html#acerca">Acerca de</a>
+      <a href="../index.html">EN</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-proxies.svg" width="1200" height="320"
+      alt="Comparación lado a lado de un rack de datacenter y una conexión doméstica"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Guía</p>
+  <h1>Proxies residenciales vs datacenter: cuál necesita tu scraper</h1>
+  <p class="lede">La pregunta nunca es «cuál es mejor». Es «qué me está bloqueando exactamente».
+  Responde eso y el tipo de proxy se elige solo — normalmente el más barato.</p>
+
+  <div class="note"><b>Aviso de afiliación:</b> algunos enlaces externos son de afiliado. Si compras a
+  través de uno podemos recibir una comisión sin coste adicional para ti; van marcados como
+  patrocinados y no cambian lo que recomendamos.</div>
+
+  <h2>Qué son realmente</h2>
+  <p>Los <b>proxies de datacenter</b> son direcciones IP que pertenecen a proveedores de hosting. Son
+  rápidos, baratos, estables y se venden por IP. Su debilidad es su propia naturaleza: cualquier sitio
+  puede consultar a quién pertenece ese rango y ver «esto es un servidor».</p>
+  <p>Los <b>proxies residenciales</b> son direcciones de conexiones domésticas reales. Para el sitio de
+  destino, la petición parece de un visitante normal. Se venden por gigabyte, son más lentos y su
+  calidad varía, porque nunca sabes qué está haciendo la conexión del otro lado.</p>
+  <p>Hay dos híbridos que importan en la práctica:</p>
+  <ul>
+    <li><b>Residencial estático / ISP</b> — direcciones con apariencia residencial alojadas en un
+    datacenter. Rápidas como datacenter, creíbles como residencial, con precio por IP. Suele ser el
+    mejor compromiso, y es la opción que casi nadie considera.</li>
+    <li><b>Proxies móviles</b> — IP de operadora, compartidas con muchos usuarios reales. Las más
+    confiables y las más caras; casi siempre sobredimensionadas.</li>
+  </ul>
+
+  <h2>Qué te bloquea, en el orden en que ocurre</h2>
+  <p>La gente recurre a residencial demasiado pronto porque asume que el bloqueo va de la IP. Casi
+  siempre es una pila de capas, y la IP es solo una:</p>
+  <ol>
+    <li><b>Ritmo y concurrencia.</b> Diez peticiones por segundo desde una dirección te limitan incluso
+    con una IP residencial impecable.</li>
+    <li><b>Comportamiento.</b> Cabeceras idénticas, sin cookies, sin referer, secuencia perfecta. Un
+    detector no necesita tu IP para verlo.</li>
+    <li><b>Reputación del ASN.</b> Aquí pierden las direcciones de datacenter: no «esta IP está
+    prohibida», sino «toda esta red es un hosting».</li>
+    <li><b>Huella (fingerprint).</b> Handshake TLS y huella del navegador que contradicen el
+    user-agent que envías.</li>
+    <li><b>Reutilización de IP.</b> En pools compartidos heredas el historial de otros.</li>
+  </ol>
+  <p>Si tu problema es la capa 1, 2 o 4, comprar IP residencial no arregla nada y cuesta más.</p>
+
+  <h2>Cuándo basta datacenter</h2>
+  <ul>
+    <li>APIs públicas y endpoints abiertos con límites documentados.</li>
+    <li>Objetivos sin protección antibot: administraciones, universidades, webs pequeñas.</li>
+    <li>Volumen alto y simple, donde necesitas rendimiento y control, no disfraz.</li>
+    <li>Cualquier cosa que pidas desde tu propia infraestructura y solo necesite otra salida.</li>
+  </ul>
+
+  <h2>Cuándo necesitas residencial de verdad</h2>
+  <ul>
+    <li><b>Páginas de resultados de buscadores.</b> La reputación del ASN actúa como primer filtro.</li>
+    <li><b>Grandes sitios de comercio y viajes</b> con proveedores antibot agresivos delante.</li>
+    <li><b>Contenido con restricción geográfica</b> donde necesitas una dirección de consumidor real
+    en un país o ciudad concreto, no solo un servidor allí.</li>
+    <li><b>Verificación de anuncios y comparación de precios</b>, donde la respuesta debe coincidir con
+    lo que ve un visitante normal.</li>
+  </ul>
+
+  <h2>La trampa del precio por gigabyte</h2>
+  <p>El datacenter se vende por IP y el residencial por GB, y esa diferencia cambia cómo debes escribir
+  tu scraper, no solo la factura:</p>
+  <ul>
+    <li><b>Pagas bytes que nunca lees.</b> Imágenes, fuentes, trackers. Bloquearlos suele recortar más
+    de la mitad del consumo con los mismos datos extraídos.</li>
+    <li><b>Las páginas pesadas te castigan dos veces.</b> Una ficha de 4&nbsp;MB cuesta varias veces
+    más que una de 400&nbsp;KB, en cada petición, siempre.</li>
+    <li><b>Los reintentos se facturan.</b> Un pool que falla el 40% no es barato a ningún precio: pagas
+    también los fallos.</li>
+    <li><b>La única unidad que importa</b> es el coste por página <i>exitosa</i>, nunca el precio
+    por GB.</li>
+  </ul>
+
+  <h2>Cómo probar antes de comprar</h2>
+  <ol>
+    <li><b>Compra la cantidad mínima</b> que permita una prueba real.</li>
+    <li><b>Usa 50–200 URLs reales</b> de tu lista, no la portada: las portadas rara vez están
+    protegidas como las fichas de detalle.</li>
+    <li><b>Mide tasa de éxito, no latencia.</b> Una petición lenta con contenido real vale más que una
+    rápida con una página de desafío.</li>
+    <li><b>Comprueba qué filtras.</b> Cabeceras, DNS, WebRTC. Un proxy que filtra tu dirección real es
+    peor que ninguno, porque crees estar cubierto.</li>
+    <li><b>Repite la prueba a la semana.</b> La calidad del pool se degrada; una foto del día uno no
+    es un veredicto.</li>
+  </ol>
+  <p>Los proveedores que publican sus propias herramientas de prueba son más fáciles de evaluar,
+  porque puedes comprobar la dirección que te asignaron en lugar de fiarte de una descripción.
+  IPRoyal, por ejemplo, ofrece <a data-out="iproyal" href="https://iproyal.com/">probador y verificador
+  de proxies</a> junto a sus pools de pago — útil durante la evaluación, compres donde compres.</p>
+
+  <div class="takeaway">
+    <h3>Resumen</h3>
+    <ul>
+      <li>Empieza por datacenter o ISP; suele bastar y cuesta menos.</li>
+      <li>Pasa a residencial solo cuando puedas nombrar el muro: normalmente buscadores o comercio muy
+      defendido.</li>
+      <li>Escribe el scraper pensando en el cobro por GB: bloquea imágenes y trackers, controla los
+      reintentos.</li>
+      <li>Juzga los pools por coste por página exitosa, no por precio por gigabyte.</li>
+    </ul>
+  </div>
+
+  <p class="small">Última revisión: septiembre de 2026. Los proveedores cambian pools, límites y precios
+  constantemente — confirma las cifras en su propia página. Nada de esto es asesoramiento legal, y las
+  reglas de scraping varían por sitio y jurisdicción.</p>
+
+  <p class="small sponsored-note" hidden>Algunos enlaces de esta página están monetizados. Llevan
+  <code>rel="sponsored"</code> y nunca afectan a lo que se recomienda.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Inicio</a>
+        <a href="index.html#acerca">Acerca de</a>
+        <a href="../residential-vs-datacenter-proxies.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — notas independientes. Algunos enlaces
+    externos son de afiliado.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>

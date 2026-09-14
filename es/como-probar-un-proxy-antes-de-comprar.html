@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cómo probar un proxy antes de comprarlo — ProxyStack</title>
+<meta name="description" content="Prueba de compra para pools de proxies: qué medir, por qué la latencia engaña, cómo detectar fugas y la segunda prueba que casi todos se saltan.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/es/como-probar-un-proxy-antes-de-comprar.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/how-to-test-a-proxy-before-you-buy.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/como-probar-un-proxy-antes-de-comprar.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/how-to-test-a-proxy-before-you-buy.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residenciales-vs-datacenter.html">Tipos de proxy</a>
+      <a href="index.html#notas">Notas</a>
+      <a href="index.html#acerca">Acerca de</a>
+      <a href="../index.html">EN</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-test.svg" width="1200" height="320"
+      alt="Medidor de tasa de éxito junto a una lista de comprobación con marcas de aprobado"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Guía</p>
+  <h1>Cómo probar un proxy antes de comprarlo</h1>
+  <p class="lede">Los vendedores publican benchmarks que favorecen a sus propios pools. No puedes
+  verificarlos, pero sí puedes hacer una prueba que importa en una hora — y esa es la diferencia entre
+  comprar bien una vez y comprar mal tres veces.</p>
+
+  <div class="note"><b>Aviso de afiliación:</b> algunos enlaces externos son de afiliado. Si compras a
+  través de uno podemos recibir una comisión sin coste adicional para ti; van marcados como
+  patrocinados y no cambian lo que recomendamos.</div>
+
+  <h2>Regla uno: mide éxito, no velocidad</h2>
+  <p>El error por defecto es medir latencia. Un pool que responde en 200&nbsp;ms con una página de
+  desafío es <i>para tu propósito</i> más lento que uno que responde en 1,5&nbsp;s con contenido real,
+  porque el rápido no produjo nada utilizable.</p>
+  <p>La única métrica que sobrevive a producción es el <b>coste por página parseada con éxito</b>:
+  resultados útiles divididos entre lo que gastaste para obtenerlos.</p>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Métrica</th><th>¿Sirve?</th><th>Por qué</th></tr></thead>
+      <tbody>
+        <tr><td>Latencia (ms)</td><td class="bad">No</td><td>Mide lo que no importa; los fallos rápidos parecen buenos</td></tr>
+        <tr><td>Tasa de éxito en tus URLs</td><td class="good">Sí</td><td>Es el número que decide si el pool sirve</td></tr>
+        <tr><td>Coste por página exitosa</td><td class="good">Sí</td><td>Combina precio y tasa de fallo en una cifra</td></tr>
+        <tr><td>Tamaño del pool («64M IPs»)</td><td class="bad">No</td><td>Número de marketing; no dice nada de tus objetivos</td></tr>
+        <tr><td>GB consumidos vs GB útiles</td><td class="good">Sí</td><td>Con cobro por GB, esta es tu eficiencia real</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Regla dos: prueba las páginas que necesitas de verdad</h2>
+  <p>La portada de un proveedor y un listado de categoría rara vez están protegidos como una ficha de
+  producto, un resultado de búsqueda o una API tras un desafío. Toma <b>50–200 URLs reales</b> de tu
+  propia lista, incluidas las incómodas, y pásalas por el pool de prueba.</p>
+  <p>Si solo pruebas las fáciles, todos los pools aprueban y la prueba no te enseñó nada.</p>
+
+  <h2>Regla tres: repite la prueba, con una semana de diferencia</h2>
+  <p>La calidad del pool se mueve. Las redes residenciales son entre pares: las direcciones del primer
+  día pueden comportarse distinto al octavo. Una sola foto no es un veredicto, es una primera
+  impresión.</p>
+
+  <h2>Lista de comprobación previa a la compra</h2>
+  <ol>
+    <li><b>Compra lo mínimo</b> que permita una prueba real.</li>
+    <li><b>Confirma qué te asignaron de verdad.</b> Comprueba la IP de salida con una consulta, no solo
+    el país que muestra el panel. Segmentar por país no es segmentar por ciudad.</li>
+    <li><b>Revisa qué filtras.</b> Cabeceras, resolución DNS, WebRTC.</li>
+    <li><b>Prueba las sesiones fijas de principio a fin.</b> Inicia sesión, avanza tres pasos, confirma
+    que se mantuvo la misma dirección.</li>
+    <li><b>Registra cada código de respuesta.</b> Separa 200, 403, 429, 503 y páginas de desafío. Un
+    pool que devuelve 429 bajo carga es un problema de concurrencia, no del pool.</li>
+    <li><b>Compara tráfico consumido con tráfico útil.</b> Si salen 4&nbsp;MB para entregar un JSON de
+    40&nbsp;KB, estás pagando imágenes y trackers que nunca lees.</li>
+  </ol>
+
+  <h2>Punto de partida gratuito</h2>
+  <p>Para la primera pasada no necesitas herramientas de pago. Un verificador de proxies y una prueba
+  de fugas te dirán si la dirección que te dieron es la que crees y si tu propio cliente está mal
+  configurado. Algunos proveedores publican estas herramientas ellos mismos: IPRoyal, por ejemplo,
+  ofrece <a data-out="iproyal" href="https://iproyal.com/">probador, verificador y test de fuga
+  WebRTC</a> junto a sus pools de pago. Sirven para evaluar, compres lo que compres.</p>
+
+  <h2>Qué hacer con los resultados</h2>
+  <ul>
+    <li><b>Más de ~95% en tus URLs difíciles:</b> el pool cumple. Optimiza coste, no proveedor.</li>
+    <li><b>70–95%:</b> casi siempre es configuración — concurrencia, cabeceras, sesiones — antes que el
+    pool. Arréglalo y vuelve a probar.</li>
+    <li><b>Por debajo del 70%:</b> el pool no es para esos objetivos. Sube de gama (datacenter → ISP →
+    residencial) o acepta que ese objetivo necesita otro enfoque.</li>
+  </ul>
+
+  <div class="takeaway">
+    <h3>Resumen</h3>
+    <ul>
+      <li>Prueba con tus URLs, incluidas las difíciles.</li>
+      <li>Juzga por tasa de éxito y coste por página exitosa, nunca por latencia ni tamaño del pool.</li>
+      <li>Comprueba fugas y consistencia de sesión, no solo «conecta».</li>
+      <li>Repite a la semana y separa los códigos de respuesta para arreglar la capa correcta.</li>
+    </ul>
+  </div>
+
+  <p class="small">Última revisión: septiembre de 2026. Confirma pool, límites y precios actuales en la
+  página del proveedor. Las reglas de scraping varían por sitio y jurisdicción — respeta los términos
+  de servicio y la ley local.</p>
+
+  <p class="small sponsored-note" hidden>Algunos enlaces de esta página están monetizados. Llevan
+  <code>rel="sponsored"</code> y nunca afectan a lo que se recomienda.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Inicio</a>
+        <a href="proxies-residenciales-vs-datacenter.html">Tipos de proxy</a>
+        <a href="../how-to-test-a-proxy-before-you-buy.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — notas independientes. Algunos enlaces
+    externos son de afiliado.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>
