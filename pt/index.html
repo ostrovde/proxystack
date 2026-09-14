@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ProxyStack — proxies e scraping explicados sem discurso de venda</title>
+<meta name="description" content="Notas práticas sobre proxies, scraping e automação: o que realmente quebra ao escalar, como o preço por GB se comporta e quando você não precisa de proxy nenhum.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/pt/">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/">
+<link rel="alternate" hreflang="pt-BR" href="https://ostrovde.github.io/proxystack/pt/">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residenciais-vs-datacenter.html">Tipos de proxy</a>
+      <a href="index.html#notas">Notas</a>
+      <a href="index.html#sobre">Sobre</a>
+      <a href="../index.html">EN</a>
+      <a href="../es/index.html">ES</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap band-in">
+    <div>
+      <p class="hchip"><i></i> Testado, não reescrito · atualizado em setembro de 2026</p>
+      <h1>Proxies e infraestrutura de scraping, sem o discurso de venda</h1>
+      <p class="lede">Quase todo conteúdo sobre proxies é escrito por quem vende proxies. Estas são
+      notas de trabalho sobre o que de fato quebra ao escalar, como os modelos de preço se comportam
+      e — muitas vezes a resposta útil — quando você não precisa de proxy nenhum.</p>
+      <div class="badges">
+        <span class="badge">Notas independentes</span>
+        <span class="badge ok">Sem posições pagas</span>
+        <span class="badge warm">Preços mudam — confirme</span>
+      </div>
+    </div>
+    <figure class="band-art">
+      <img src="../assets/img/hero-globe.svg" width="1120" height="620"
+           alt="Globo esquemático com nós de proxy, escudo verificado e métricas de requisições">
+    </figure>
+  </div>
+</section>
+
+<main class="wrap">
+
+  <div class="note">
+    <b>Aviso de afiliados:</b> alguns links externos deste site são links de afiliado. Se você comprar
+    por um deles, podemos receber uma comissão sem custo extra para você, e esses links são marcados
+    como patrocinados. Isso nunca muda o que recomendamos: ferramentas que não usaríamos simplesmente
+    não aparecem aqui.
+  </div>
+
+  <h2 id="notas">Comece por aqui</h2>
+  <div class="cards">
+    <div class="card">
+      <a class="thumb" href="proxies-residenciais-vs-datacenter.html"><img src="../assets/img/g-proxies.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Guia</p>
+        <h3>Residenciais vs datacenter</h3>
+        <p>Qual deles o seu scraper realmente precisa — e quando pagar por IP residencial é dinheiro
+        jogado fora.</p>
+        <a class="more" href="proxies-residenciais-vs-datacenter.html">Ler o guia →</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="thumb" href="como-testar-um-proxy-antes-de-comprar.html"><img src="../assets/img/g-test.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Guia</p>
+        <h3>Testar antes de comprar</h3>
+        <p>O que medir, por que latência é a métrica errada e o segundo teste que quase ninguém faz.</p>
+        <a class="more" href="como-testar-um-proxy-antes-de-comprar.html">Ler o guia →</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="thumb" href="por-que-seu-proxy-e-bloqueado.html"><img src="../assets/img/g-blocked.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Diagnóstico</p>
+        <h3>Por que seu proxy é bloqueado</h3>
+        <p>Sete causas reais, na ordem em que acontecem, e como saber qual camada está falhando.</p>
+        <a class="more" href="por-que-seu-proxy-e-bloqueado.html">Ler o guia →</a>
+      </div>
+    </div>
+    <div class="card">
+      <a class="thumb" href="sessoes-rotativas-vs-fixas.html"><img src="../assets/img/g-sessions.svg"
+         width="1200" height="320" alt=""></a>
+      <div class="body">
+        <p class="tag">Infraestrutura</p>
+        <h3>Sessões rotativas vs fixas</h3>
+        <p>Resolvem problemas opostos, e escolher errado falha em silêncio: seus dados ficam errados
+        sem avisar.</p>
+        <a class="more" href="sessoes-rotativas-vs-fixas.html">Ler o guia →</a>
+      </div>
+    </div>
+  </div>
+
+  <h2>Todos os artigos</h2>
+  <ul class="artlist">
+    <li><a href="proxies-residenciais-vs-datacenter.html"><span class="num">01</span>
+      <span class="t">Proxies residenciais vs datacenter: qual o seu scraper precisa</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="como-testar-um-proxy-antes-de-comprar.html"><span class="num">02</span>
+      <span class="t">Como testar um proxy antes de comprar</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="por-que-seu-proxy-e-bloqueado.html"><span class="num">03</span>
+      <span class="t">Por que seu proxy é bloqueado: sete causas reais</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="sessoes-rotativas-vs-fixas.html"><span class="num">04</span>
+      <span class="t">Sessões rotativas vs fixas: quando cada uma quebra</span>
+      <span class="arrow">→</span></a></li>
+    <li><a href="preco-de-proxies-por-gb-vs-por-ip.html"><span class="num">05</span>
+      <span class="t">Preço de proxies: por GB ou por IP</span>
+      <span class="arrow">→</span></a></li>
+  </ul>
+
+  <h2 id="sobre">O que é este site</h2>
+  <p>O ProxyStack publica notas práticas sobre a parte de infraestrutura da coleta de dados: proxies,
+  automação de navegador, máquinas remotas e o ferramental em volta. O objetivo é estreito: ajudar você
+  a escolher certo uma vez, em vez de recomprar três vezes.</p>
+  <ul>
+    <li>Descrevemos para que uma ferramenta <b>não</b> serve, não só para que serve.</li>
+    <li>Não publicamos preços ou limites inventados. Quando um dado é incerto, apontamos para a página
+    de preços do fornecedor e dizemos isso.</li>
+    <li>Relações de afiliado são declaradas em cada página onde existem e nunca decidem a ordem.</li>
+  </ul>
+
+  <p class="small sponsored-note" hidden>Alguns links deste site são monetizados. Eles carregam
+  <code>rel="sponsored"</code> e nunca afetam o que é recomendado.</p>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="proxies-residenciais-vs-datacenter.html">Tipos de proxy</a>
+        <a href="index.html#sobre">Sobre</a>
+        <a href="../index.html">English</a>
+        <a href="../es/index.html">Español</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — notas independentes. Alguns links
+    externos são de afiliado. Fornecedores mudam preços e limites com frequência; confirme sempre na
+    página deles. Nada aqui é aconselhamento jurídico ou financeiro.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>

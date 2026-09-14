@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sessões rotativas vs fixas: quando cada uma quebra — ProxyStack</title>
+<meta name="description" content="Rotacionar endereços e fixar sessões resolvem problemas opostos. Como escolher por tarefa, quanto deve durar uma sessão fixa e a falha que corrompe seus dados em silêncio.">
+<link rel="canonical" href="https://ostrovde.github.io/proxystack/pt/sessoes-rotativas-vs-fixas.html">
+<link rel="alternate" hreflang="en" href="https://ostrovde.github.io/proxystack/rotating-vs-sticky-sessions.html">
+<link rel="alternate" hreflang="es" href="https://ostrovde.github.io/proxystack/es/sesiones-rotativas-vs-fijas.html">
+<link rel="alternate" hreflang="pt-BR" href="https://ostrovde.github.io/proxystack/pt/sessoes-rotativas-vs-fixas.html">
+<link rel="alternate" hreflang="x-default" href="https://ostrovde.github.io/proxystack/rotating-vs-sticky-sessions.html">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap-wide">
+    <a class="brand" href="index.html"><img src="../assets/img/favicon.svg" alt="">Proxy<span>Stack</span></a>
+    <nav>
+      <a href="proxies-residenciais-vs-datacenter.html">Tipos de proxy</a>
+      <a href="index.html#notas">Notas</a>
+      <a href="index.html#sobre">Sobre</a>
+      <a href="../index.html">EN</a>
+      <a href="../es/index.html">ES</a>
+    </nav>
+  </div>
+</header>
+
+<section class="band band-slim">
+  <div class="wrap">
+    <figure class="band-art"><img src="../assets/img/g-sessions.svg" width="1200" height="320"
+      alt="Dois modos de sessão comparados: endereços rotativos contra um endereço fixo"></figure>
+  </div>
+</section>
+
+<main class="wrap article">
+  <p class="kicker">Infraestrutura</p>
+  <h1>Sessões rotativas vs fixas: quando cada uma quebra</h1>
+  <p class="lede">Resolvem problemas opostos, e escolher errado produz uma falha difícil de ver: seu
+  código roda, suas requisições retornam 200 e seus dados estão errados em silêncio.</p>
+
+  <div class="note"><b>Aviso de afiliados:</b> alguns links externos são de afiliado, marcados como
+  patrocinados. Isso não muda o que recomendamos.</div>
+
+  <h2>A diferença em uma linha</h2>
+  <p><b>Rotativa</b> entrega um IP de saída diferente por requisição. <b>Fixa</b> entrega o mesmo IP
+  durante toda a sessão. Mesmo pool, mesmo preço, comportamento oposto — e a escolha certa depende de o
+  destino lembrar de você entre requisições.</p>
+
+  <h2>Use rotativa quando cada requisição é independente</h2>
+  <ul>
+    <li>Páginas de produto ou listagens visíveis sem login.</li>
+    <li>Dados públicos em que nada se arrasta entre páginas.</li>
+    <li>Rastreamento de grande volume, em que o objetivo é distribuir a carga.</li>
+  </ul>
+
+  <h2>Use fixa quando o destino te acompanha</h2>
+  <ul>
+    <li>Tudo que está atrás de login: trocar de IP no meio do fluxo parece sequestro de sessão.</li>
+    <li>Fluxos de várias etapas: carrinho, checkout, reservas, formulários.</li>
+    <li>Sites que emitem um desafio que você resolve uma vez e depois confiam no endereço.</li>
+    <li>Limites aplicados por endereço, em que trocar de IP reinicia o seu progresso.</li>
+  </ul>
+
+  <h2>A falha silenciosa</h2>
+  <p>O erro caro é rotacionar dentro de uma sessão que precisa de continuidade. Nada quebra. O que
+  acontece é isto:</p>
+  <ol>
+    <li>A sessão rotaciona no meio do fluxo e o site trata a próxima requisição como um visitante novo,
+    não autenticado.</li>
+    <li>Você recebe uma página de login ou um desafio — com HTTP 200, porque o servidor respondeu com
+    sucesso.</li>
+    <li>Seu parser aceita e grava valores vazios ou padrão como se fossem dados reais.</li>
+  </ol>
+  <p>Você descobre semanas depois, num conjunto de dados que parece completo e não está. Valide as
+  respostas contra um marcador conhecido, não apenas contra o código de status.</p>
+
+  <h2>Quanto deve durar uma sessão fixa</h2>
+  <ul>
+    <li><b>Minutos, não horas</b>, na maioria das tarefas: uma sessão por unidade lógica de trabalho.</li>
+    <li><b>Fixe por conta ou tarefa, não por worker.</b> Se dois workers compartilham um endereço fixo,
+    você recriou o problema de concorrência que queria evitar.</li>
+    <li><b>Descarte a sessão na primeira falha dura.</b> Continuar num endereço já desafiado é gastar
+    requisições.</li>
+  </ul>
+
+  <h2>Onde a sua própria stack te trai</h2>
+  <p>Quase todo relato de “o fixo não funciona” é do lado do cliente: reuso de conexão com outro
+  identificador de sessão, código assíncrono que dispara requisições paralelas dentro da mesma sessão,
+  uma camada de retentativa que pega outro endereço sem avisar o gerenciador de sessão, ou
+  identificadores gerados por requisição em vez de por tarefa.</p>
+  <p>Antes de culpar o pool, registre o IP de saída em cada requisição de um mesmo fluxo e confirme que
+  ele se manteve. Um provedor que expõe o endereço atribuído por sessão transforma isso numa checagem
+  de dois minutos: a IPRoyal, por exemplo, permite
+  <a data-out="iproyal" href="https://iproyal.com/">pedir um identificador de sessão e um país
+  específicos</a>, então o endereço é reproduzível em vez de adivinhado.</p>
+
+  <h2>Escolha por tarefa</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Tarefa</th><th>Modo</th><th>Por quê</th></tr></thead>
+      <tbody>
+        <tr><td>Catálogos públicos</td><td class="good">Rotativa</td><td>Requisições independentes, distribui carga</td></tr>
+        <tr><td>Resultados de buscadores</td><td>Rotativa com espera</td><td>Independentes, mas sensíveis ao ritmo</td></tr>
+        <tr><td>Painéis com login</td><td class="good">Fixa</td><td>A continuidade é o objetivo</td></tr>
+        <tr><td>Checkout ou reservas</td><td class="good">Fixa</td><td>Rotacionar no meio quebra a sessão</td></tr>
+        <tr><td>Um desafio e depois navegar</td><td class="good">Fixa</td><td>Mantém o endereço confiável</td></tr>
+        <tr><td>Retentativa após bloqueio</td><td>Rotacione já</td><td>O endereço atual está queimado</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="takeaway">
+    <h3>Resumo</h3>
+    <ul>
+      <li>Rotativa para requisições independentes; fixa para o que o site lembra.</li>
+      <li>Rotacionar dentro de uma sessão não dá erro: corrompe dados em silêncio.</li>
+      <li>Uma sessão fixa por unidade de trabalho, descartada na primeira falha dura.</li>
+      <li>Verifique se o IP de saída se manteve em todo o fluxo antes de culpar o provedor.</li>
+    </ul>
+  </div>
+
+  <p class="small">Última revisão: setembro de 2026. Recursos e limites mudam conforme a faixa do
+  provedor — confirme na página dele.</p>
+
+  <p class="small sponsored-note" hidden>Alguns links desta página são monetizados. Eles carregam
+  <code>rel="sponsored"</code> e nunca afetam o que é recomendado.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-in">
+      <span class="foot-brand"><img src="../assets/img/favicon.svg" alt="">ProxyStack</span>
+      <span class="foot-links">
+        <a href="index.html">Início</a>
+        <a href="por-que-seu-proxy-e-bloqueado.html">Bloqueios</a>
+        <a href="../rotating-vs-sticky-sessions.html">English</a>
+      </span>
+    </div>
+    <p class="small" style="margin:16px 0 0">© 2026 ProxyStack — notas independentes. Alguns links
+    externos são de afiliado.</p>
+  </div>
+</footer>
+
+<script src="../assets/links.js" defer></script>
+</body>
+</html>
